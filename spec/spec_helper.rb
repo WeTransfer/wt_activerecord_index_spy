@@ -1,6 +1,9 @@
 # frozen_string_literal: true
+require 'dotenv/load'
+Dotenv.load
 
 require "mysql_index_checker"
+require "active_record"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
