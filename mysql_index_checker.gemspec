@@ -8,17 +8,15 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Fabio Perrella"]
   spec.email         = ["fabio.perrella@gmail.com"]
 
-  spec.summary       = "TODO: Write a short summary, because RubyGems requires one."
-  spec.description   = "TODO: Write a longer description or delete this line."
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = "It checks if queries use an index"
+  spec.description   = "It uses activerecord's notifications to run an explain query on each query that uses a WHERE statement"
+  spec.homepage      = "https://github.com/fabioperrella/mysql_index_checker"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.4.0")
 
-  spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
-
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "TODO: Put your gem's public repo URL here."
-  spec.metadata["changelog_uri"] = "TODO: Put your gem's CHANGELOG.md URL here."
+  spec.metadata["source_code_uri"] = "https://github.com/fabioperrella/mysql_index_checker"
+  spec.metadata["changelog_uri"] = "https://github.com/fabioperrella/mysql_index_checker/blob/main/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
