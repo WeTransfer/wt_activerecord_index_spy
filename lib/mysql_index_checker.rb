@@ -3,6 +3,9 @@
 require_relative "mysql_index_checker/version"
 
 module MysqlIndexChecker
-  class Error < StandardError; end
-  # Your code goes here...
+  QueryNotUsingIndex = Class.new(StandardError)
+
+  def self.raise_error_when_a_query_does_not_use_an_index
+    yield
+  end
 end

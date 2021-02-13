@@ -46,6 +46,10 @@ RSpec.describe MysqlIndexChecker do
   it "does something useful" do
     User.create!(name: 'lala')
 
-    expect(User.where(name: 'lala').count).to eq(1)
+    expect do
+      described_class.raise_error_when_a_query_does_not_use_an_index do
+        User.find_by(name: 'lala')
+      end
+    end.to raise_error(described_class::QueryNotUsingIndex)
   end
 end
