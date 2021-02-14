@@ -40,16 +40,33 @@ RSpec.describe MysqlIndexChecker do
   end
 
   after :all do
+    # TODO: use database cleaner
     ActiveRecord::Base.connection.drop_database('mysql_index_checker_test')
   end
 
-  it "does something useful" do
-    User.create!(name: 'lala')
+  describe '.raise_error_when_a_query_does_not_use_an_index' do
+    context 'when a query does not use an index' do
+      it "raises QueryNotUsingIndex " do
+        User.create!(name: 'lala')
 
-    expect do
-      described_class.raise_error_when_a_query_does_not_use_an_index do
-        User.find_by(name: 'lala')
+        expect do
+          described_class.raise_error_when_a_query_does_not_use_an_index do
+            User.find_by(name: 'lala')
+          end
+        end.to raise_error(described_class::QueryNotUsingIndex)
       end
-    end.to raise_error(described_class::QueryNotUsingIndex)
+    end
+
+    context 'when a query uses an index' do
+      it "does not raise QueryNotUsingIndex " do
+        User.create!(name: 'lala', id: 1)
+
+        expect do
+          described_class.raise_error_when_a_query_does_not_use_an_index do
+            User.find_by(id: 1)
+          end
+        end.not_to raise_error(described_class::QueryNotUsingIndex)
+      end
+    end
   end
 end
