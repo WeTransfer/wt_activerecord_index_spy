@@ -6,7 +6,7 @@ require_relative "mysql_index_checker/index_verifier"
 module MysqlIndexChecker
   QueryNotUsingIndex = Class.new(StandardError)
 
-  def self.raise_error_when_a_query_does_not_use_an_index
+  def self.check_and_raise_error
     index_verifier = IndexVerifier.new
 
     ActiveSupport::Notifications

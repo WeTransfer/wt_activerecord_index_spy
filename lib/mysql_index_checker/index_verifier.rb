@@ -30,9 +30,12 @@ module MysqlIndexChecker
         values[:sql].downcase.include?('where') &&
         IGNORED_SQL.none? { |r| values[:sql] =~ r })
 
-        result = ActiveRecord::Base.connection.query("explain #{values[:sql]}")
         # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
-        if(!result.first[6])
+        result = ActiveRecord::Base.connection.query("explain #{values[:sql]}").first
+
+        return if result.last&.include?('no matching row')
+
+        if(!result[6])
           @queries_missing_index << values[:sql]
         end
       end

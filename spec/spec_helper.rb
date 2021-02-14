@@ -5,6 +5,9 @@ Dotenv.load
 require "mysql_index_checker"
 require "active_record"
 
+# ActiveRecord::Base.logger = Logger.new(STDOUT)
+# ActiveRecord::Base.logger.level = 0
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
