@@ -5,6 +5,8 @@ module MysqlIndexChecker
   # notification.
   # It gets each query that uses a WHERE statement and runs a EXPLAIN query to
   # see if it uses an index.
+  MissingIndex = Class.new(StandardError)
+
   class IndexVerifier
     IGNORED_SQL = [
       /^PRAGMA (?!(table_info))/,
@@ -28,14 +30,20 @@ module MysqlIndexChecker
     end
 
     def call(_name, _start, _finish, _message_id, values)
-      return unless analyse_query?(**values.slice(:sql, :name))
+      sql = values[:sql]
+      return unless analyse_query?(sql: sql, name: values[:name])
 
       # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
-      result = ActiveRecord::Base.connection.query("explain #{values[:sql]}").first
+      results =
+        ActiveRecord::Base.connection.query("explain #{values[:sql]}")
 
-      return if result.last&.include?("no matching row")
+      id, select_type, table, partitions, type, possible_keys, key, key_len,
+        ref, rows, filtered, extra = results.first
 
-      @queries_missing_index << values[:sql] unless result[6]
+      return if extra&.include?("no matching row")
+
+      raise MissingIndex, sql if type == 'ALL'
+      raise MissingIndex, sql unless key
     end
 
     private

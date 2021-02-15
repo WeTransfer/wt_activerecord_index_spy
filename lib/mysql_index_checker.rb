@@ -5,8 +5,6 @@ require_relative "mysql_index_checker/index_verifier"
 
 # This is the top level module which requires everything
 module MysqlIndexChecker
-  MissingIndex = Class.new(StandardError)
-
   def self.check_and_raise_error
     index_verifier = IndexVerifier.new
 
@@ -14,9 +12,5 @@ module MysqlIndexChecker
       .subscribe("sql.active_record", index_verifier)
 
     yield
-
-    return if index_verifier.queries_missing_index.count.zero?
-
-    raise MissingIndex, index_verifier.queries_missing_index
   end
 end

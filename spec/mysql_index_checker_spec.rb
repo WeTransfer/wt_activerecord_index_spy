@@ -39,5 +39,18 @@ RSpec.describe MysqlIndexChecker do
         end.not_to raise_error
       end
     end
+
+    context "when a query filter multiple fields with no index" do
+      it "raises MissingIndex " do
+        User.create(name: 'lala', age: 20)
+        User.create(name: 'lala2', age: 10)
+
+        expect do
+          described_class.check_and_raise_error do
+            User.find_by(age: 20, name: 'popo')
+          end
+        end.to raise_error(described_class::MissingIndex)
+      end
+    end
   end
 end
