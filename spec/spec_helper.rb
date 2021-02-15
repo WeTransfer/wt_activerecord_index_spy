@@ -45,8 +45,6 @@ RSpec.configure do |config|
     end
 
     create_table_migration.new.change
-
-    class User < ActiveRecord::Base; end
   end
 
   config.around :each do |example|
@@ -60,3 +58,5 @@ RSpec.configure do |config|
     ActiveRecord::Base.connection.drop_database("mysql_index_checker_test")
   end
 end
+
+class User < ActiveRecord::Base; end

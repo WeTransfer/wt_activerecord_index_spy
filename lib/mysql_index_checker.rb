@@ -3,6 +3,7 @@
 require_relative "mysql_index_checker/version"
 require_relative "mysql_index_checker/index_verifier"
 
+# This is the top level module which requires everything
 module MysqlIndexChecker
   QueryNotUsingIndex = Class.new(StandardError)
 
@@ -14,6 +15,8 @@ module MysqlIndexChecker
 
     yield
 
-    raise QueryNotUsingIndex, index_verifier.queries_missing_index if index_verifier.queries_missing_index.count > 0
+    return if index_verifier.queries_missing_index.count.zero?
+
+    raise QueryNotUsingIndex, index_verifier.queries_missing_index
   end
 end

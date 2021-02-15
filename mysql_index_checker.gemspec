@@ -9,7 +9,8 @@ Gem::Specification.new do |spec|
   spec.email         = ["fabio.perrella@gmail.com"]
 
   spec.summary       = "It checks if queries use an index"
-  spec.description   = "It uses activerecord's notifications to run an explain query on each query that uses a WHERE statement"
+  spec.description   = "It uses activerecord's notifications to run an explain" \
+  " query on each query that uses a WHERE statement"
   spec.homepage      = "https://github.com/fabioperrella/mysql_index_checker"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.4.0")
