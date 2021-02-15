@@ -21,23 +21,21 @@ module MysqlIndexChecker
       @queries_missing_index = []
     end
 
-    def call(name, start, finish, message_id, values)
+    def call(_name, _start, _finish, _message_id, values)
       # FIXME: this seems bad. we should probably have a better way to indicate
       # the query was cached
-      if(values[:name] != 'CACHE' &&
-        values[:name] != 'SCHEMA' &&
-        values[:name].present? &&
-        values[:sql].downcase.include?('where') &&
-        IGNORED_SQL.none? { |r| values[:sql] =~ r })
+      if values[:name] != "CACHE" &&
+         values[:name] != "SCHEMA" &&
+         values[:name].present? &&
+         values[:sql].downcase.include?("where") &&
+         IGNORED_SQL.none? { |r| values[:sql] =~ r }
 
         # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
         result = ActiveRecord::Base.connection.query("explain #{values[:sql]}").first
 
-        return if result.last&.include?('no matching row')
+        return if result.last&.include?("no matching row")
 
-        if(!result[6])
-          @queries_missing_index << values[:sql]
-        end
+        @queries_missing_index << values[:sql] unless result[6]
       end
     end
   end

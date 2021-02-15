@@ -10,12 +10,10 @@ module MysqlIndexChecker
     index_verifier = IndexVerifier.new
 
     ActiveSupport::Notifications
-      .subscribe('sql.active_record', index_verifier)
+      .subscribe("sql.active_record", index_verifier)
 
     yield
 
-    if index_verifier.queries_missing_index.count > 0
-      raise QueryNotUsingIndex, index_verifier.queries_missing_index
-    end
+    raise QueryNotUsingIndex, index_verifier.queries_missing_index if index_verifier.queries_missing_index.count > 0
   end
 end
