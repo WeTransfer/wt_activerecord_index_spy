@@ -13,6 +13,7 @@ jobs:
         ruby-version: 2.7.1
     - name: Run the default task
       run: |
+        sudo systemctl start mysql.service
         gem install bundler -v 2.2.6
         bundle install
         bundle exec rake
