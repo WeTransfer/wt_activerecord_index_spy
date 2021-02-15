@@ -28,7 +28,7 @@ module MysqlIndexChecker
     end
 
     def call(_name, _start, _finish, _message_id, values)
-      return if ignore_query?(values.slice(:sql, :name))
+      return unless analyse_query?(values.slice(:sql, :name))
 
       # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
       result = ActiveRecord::Base.connection.query("explain #{values[:sql]}").first
@@ -40,7 +40,7 @@ module MysqlIndexChecker
 
     private
 
-    def ignore_query?(name:, sql:)
+    def analyse_query?(name:, sql:)
       # FIXME: this seems bad. we should probably have a better way to indicate
       # the query was cached
       name != "CACHE" &&
