@@ -7,21 +7,21 @@ RSpec.describe MysqlIndexChecker do
 
   describe ".check_and_raise_error" do
     context "when a query does not use an index" do
-      it "raises QueryNotUsingIndex " do
+      it "raises MissingIndex " do
         begin
           described_class.check_and_raise_error do
             User.find_by(name: "lala")
           end
 
           raise "this test should have raised an error"
-        rescue described_class::QueryNotUsingIndex => e
+        rescue described_class::MissingIndex => e
           expect(e.message).to include("WHERE `users`.`name` = 'lala'")
         end
       end
     end
 
     context "when a query uses the primary key index" do
-      it "does not raise QueryNotUsingIndex " do
+      it "does not raise MissingIndex " do
         expect do
           described_class.check_and_raise_error do
             User.find_by(id: 1)
@@ -31,7 +31,7 @@ RSpec.describe MysqlIndexChecker do
     end
 
     context "when a query uses some index" do
-      it "does not raise QueryNotUsingIndex " do
+      it "does not raise MissingIndex " do
         expect do
           described_class.check_and_raise_error do
             User.find_by(email: "aa@aa.com")
