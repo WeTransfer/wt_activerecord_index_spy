@@ -34,20 +34,16 @@ module MysqlIndexChecker
       return unless analyse_query?(sql: sql, name: values[:name])
 
       # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
-      results =
-        ActiveRecord::Base.connection.query("explain #{values[:sql]}")
+      results = ActiveRecord::Base.connection.query("explain #{values[:sql]}")
 
       _id, _select_type, _table, _partitions, type, _possible_keys, key, _key_len,
         _ref, _rows, _filtered, extra = results.first
 
       # https://bugs.mysql.com/bug.php?id=64197
-      return if extra&.include?('Impossible WHERE noticed after reading const tables')
+      return if extra&.include?("Impossible WHERE noticed after reading const tables")
       return if extra&.include?("no matching row")
 
-      if type == "ALL" || !key
-        error_message = "query: #{sql}, result: #{results}"
-        raise MissingIndex, error_message
-      end
+      raise MissingIndex, "query: #{sql}, result: #{results}" if type == "ALL" || !key
     end
 
     private

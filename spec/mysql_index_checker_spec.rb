@@ -56,7 +56,7 @@ RSpec.describe MysqlIndexChecker do
         User.create(name: "lala", age: 20)
 
         expect do
-          User.where(id:1, email: "aa@aa.com", age: 20).to_a
+          User.where(id: 1, email: "aa@aa.com", age: 20).to_a
         end.not_to raise_error
       end
     end
