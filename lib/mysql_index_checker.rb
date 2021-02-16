@@ -5,12 +5,14 @@ require_relative "mysql_index_checker/index_verifier"
 
 # This is the top level module which requires everything
 module MysqlIndexChecker
-  def self.check_and_raise_error
+  def self.raise_error_on_missing_index
     index_verifier = IndexVerifier.new
 
-    ActiveSupport::Notifications
-      .subscribe("sql.active_record", index_verifier)
+    subscriber = ActiveSupport::Notifications
+                 .subscribe("sql.active_record", index_verifier)
 
     yield
+
+    ActiveSupport::Notifications.unsubscribe(subscriber)
   end
 end

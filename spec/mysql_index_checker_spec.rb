@@ -5,13 +5,17 @@ RSpec.describe MysqlIndexChecker do
     expect(MysqlIndexChecker::VERSION).not_to be nil
   end
 
-  describe ".check_and_raise_error" do
+  describe ".enable_raise_error_on_missing_index" do
+    around(:each) do |example|
+      described_class.raise_error_on_missing_index do
+        example.run
+      end
+    end
+
     context "when a query does not use an index" do
       it "raises MissingIndex " do
         begin
-          described_class.check_and_raise_error do
-            User.find_by(name: "lala")
-          end
+          User.find_by(name: "lala")
 
           raise "this test should have raised an error"
         rescue described_class::MissingIndex => e
@@ -23,9 +27,7 @@ RSpec.describe MysqlIndexChecker do
     context "when a query uses the primary key index" do
       it "does not raise MissingIndex " do
         expect do
-          described_class.check_and_raise_error do
-            User.find_by(id: 1)
-          end
+          User.find_by(id: 1)
         end.not_to raise_error
       end
     end
@@ -33,9 +35,7 @@ RSpec.describe MysqlIndexChecker do
     context "when a query uses some index" do
       it "does not raise MissingIndex " do
         expect do
-          described_class.check_and_raise_error do
-            User.find_by(email: "aa@aa.com")
-          end
+          User.find_by(email: "aa@aa.com")
         end.not_to raise_error
       end
     end
@@ -46,9 +46,7 @@ RSpec.describe MysqlIndexChecker do
         User.create(name: "lala2", age: 10)
 
         expect do
-          described_class.check_and_raise_error do
-            User.find_by(age: 20, name: "popo")
-          end
+          User.find_by(age: 20, name: "popo")
         end.to raise_error(described_class::MissingIndex)
       end
     end
