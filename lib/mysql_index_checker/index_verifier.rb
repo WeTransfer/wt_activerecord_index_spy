@@ -40,10 +40,14 @@ module MysqlIndexChecker
       _id, _select_type, _table, _partitions, type, _possible_keys, key, _key_len,
         _ref, _rows, _filtered, extra = results.first
 
+      # https://bugs.mysql.com/bug.php?id=64197
+      return if extra&.include?('Impossible WHERE noticed after reading const tables')
       return if extra&.include?("no matching row")
 
-      raise MissingIndex, sql if type == "ALL"
-      raise MissingIndex, sql unless key
+      if type == "ALL" || !key
+        error_message = "query: #{sql}, result: #{results}"
+        raise MissingIndex, error_message
+      end
     end
 
     private

@@ -50,5 +50,15 @@ RSpec.describe MysqlIndexChecker do
         end.to raise_error(described_class::MissingIndex)
       end
     end
+
+    context "when EXPLAIN returns 'Impossible WHERE noticed after reading const tables'" do
+      it "does not raise MissingIndex " do
+        User.create(name: "lala", age: 20)
+
+        expect do
+          User.where(id:1, email: "aa@aa.com", age: 20).to_a
+        end.not_to raise_error
+      end
+    end
   end
 end
