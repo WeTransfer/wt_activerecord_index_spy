@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module MysqlIndexChecker
+  MissingIndex = Class.new(StandardError)
+
   # This class can be used to subscribe to an activerecord "sql.active_record"
   # notification.
   # It gets each query that uses a WHERE statement and runs a EXPLAIN query to
   # see if it uses an index.
-  MissingIndex = Class.new(StandardError)
-
   class IndexVerifier
     IGNORED_SQL = [
       /^PRAGMA (?!(table_info))/,
@@ -37,12 +37,12 @@ module MysqlIndexChecker
       results =
         ActiveRecord::Base.connection.query("explain #{values[:sql]}")
 
-      id, select_type, table, partitions, type, possible_keys, key, key_len,
-        ref, rows, filtered, extra = results.first
+      _id, _select_type, _table, _partitions, type, _possible_keys, key, _key_len,
+        _ref, _rows, _filtered, extra = results.first
 
       return if extra&.include?("no matching row")
 
-      raise MissingIndex, sql if type == 'ALL'
+      raise MissingIndex, sql if type == "ALL"
       raise MissingIndex, sql unless key
     end
 
