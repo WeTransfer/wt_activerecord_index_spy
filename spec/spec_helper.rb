@@ -44,6 +44,10 @@ RSpec.configure do |config|
 
         add_index :users, :email
         add_index :users, :city_id
+
+        create_table :cities do |t|
+          t.string :name
+        end
       end
     end
 

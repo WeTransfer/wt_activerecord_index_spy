@@ -72,5 +72,22 @@ RSpec.describe MysqlIndexChecker do
         end.not_to raise_error
       end
     end
+
+    context "when a query has index but a subquery does not" do
+      it "raises MissingIndex " do
+        City.create!(name: 'Rio', id: 1)
+        City.create!(name: 'Santo Andre', id: 2)
+        City.create!(name: 'Maua', id: 3)
+
+        User.create!(name: "Lala1", city_id: 1)
+        User.create!(name: "Lala2", city_id: 2)
+        User.create!(name: "Lala3", city_id: 1)
+
+        expect do
+          cities = City.where(name: 'Santo Andre')
+          User.where(city_id: cities).to_a
+        end.to raise_error(described_class::MissingIndex, /WHERE `users`.`city_id/)
+      end
+    end
   end
 end
