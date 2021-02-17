@@ -34,29 +34,32 @@ module MysqlIndexChecker
       return unless analyse_query?(sql: sql, name: values[:name])
 
       # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
-      results = ActiveRecord::Base.connection.query("explain #{values[:sql]}")
-
-      results.each do |result|
-        _id, _select_type, _table, _partitions, type, possible_keys, key, _key_len,
-          ref, _rows, _filtered, extra = result
-
-        return if type == 'ref'
-
-        # https://bugs.mysql.com/bug.php?id=64197
-        return if extra&.include?("Impossible WHERE noticed after reading const tables")
-        return if extra&.include?("no matching row")
-
-        if possible_keys.nil?
-          raise MissingIndex, "query: #{sql}, result: #{results}"
-        end
-
-        if possible_keys == 'PRIMARY' && key.nil? && type == 'ALL'
-          raise MissingIndex, "query: #{sql}, result: #{results}"
-        end
-      end
+      results = ActiveRecord::Base.connection.query("explain #{sql}")
+      raise MissingIndex, "query: #{sql}, result: #{results}" if results.any? { |result| missing_index?(result) }
     end
 
     private
+
+    ALLOWED_EXTRA_VALUES = [
+      # https://bugs.mysql.com/bug.php?id=64197
+      "Impossible WHERE noticed after reading const tables",
+      "no matching row"
+    ].freeze
+
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
+    def missing_index?(result)
+      _id, _select_type, _table, _partitions, type, possible_keys, key, _key_len,
+        _ref, _rows, _filtered, extra = result
+
+      return false if type == "ref"
+      return false if ALLOWED_EXTRA_VALUES.any? { |value| extra&.include?(value) }
+
+      return true if possible_keys.nil?
+      return true if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
+    end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def analyse_query?(name:, sql:)
       # FIXME: this seems bad. we should probably have a better way to indicate

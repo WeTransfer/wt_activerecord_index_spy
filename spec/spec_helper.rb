@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/MethodLength
 require "dotenv/load"
 Dotenv.load
 
@@ -66,9 +67,11 @@ RSpec.configure do |config|
   end
 
   config.expect_with :rspec do |c|
-    c.max_formatted_output_length = 10000
+    c.max_formatted_output_length = 10_000
   end
 end
 
 class User < ActiveRecord::Base; end
+
 class City < ActiveRecord::Base; end
+# rubocop:enable Metrics/MethodLength
