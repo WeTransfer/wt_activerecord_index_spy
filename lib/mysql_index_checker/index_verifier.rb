@@ -36,14 +36,18 @@ module MysqlIndexChecker
       # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
       results = ActiveRecord::Base.connection.query("explain #{values[:sql]}")
 
-      _id, _select_type, _table, _partitions, type, _possible_keys, key, _key_len,
-        _ref, _rows, _filtered, extra = results.first
+      _id, _select_type, _table, _partitions, type, possible_keys, _key, _key_len,
+        ref, _rows, _filtered, extra = results.first
+
+      return if type == 'ref'
 
       # https://bugs.mysql.com/bug.php?id=64197
       return if extra&.include?("Impossible WHERE noticed after reading const tables")
       return if extra&.include?("no matching row")
 
-      raise MissingIndex, "query: #{sql}, result: #{results}" if type == "ALL" || !key
+      if possible_keys.nil?
+        raise MissingIndex, "query: #{sql}, result: #{results}"
+      end
     end
 
     private

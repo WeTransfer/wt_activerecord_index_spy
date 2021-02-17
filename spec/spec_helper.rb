@@ -39,9 +39,11 @@ RSpec.configure do |config|
           t.string :name
           t.string :email
           t.integer :age
+          t.integer :city_id
         end
 
         add_index :users, :email
+        add_index :users, :city_id
       end
     end
 

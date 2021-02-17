@@ -60,5 +60,17 @@ RSpec.describe MysqlIndexChecker do
         end.not_to raise_error
       end
     end
+
+    context "when there is an index but the query returns all records" do
+      it "does not raise MissingIndex " do
+        User.create!(name: "Lala1", city_id: 1)
+        User.create!(name: "Lala2", city_id: 1)
+        User.create!(name: "Lala3", city_id: 1)
+
+        expect do
+          User.where(city_id: 1).to_a
+        end.not_to raise_error
+      end
+    end
   end
 end
