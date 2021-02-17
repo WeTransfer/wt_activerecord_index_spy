@@ -60,6 +60,11 @@ RSpec.configure do |config|
   config.after :all do
     ActiveRecord::Base.connection.drop_database("mysql_index_checker_test")
   end
+
+  config.expect_with :rspec do |c|
+    c.max_formatted_output_length = 10000
+  end
 end
 
 class User < ActiveRecord::Base; end
+class City < ActiveRecord::Base; end
