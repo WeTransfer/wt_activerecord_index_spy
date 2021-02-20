@@ -5,22 +5,20 @@ RSpec.describe MysqlIndexChecker do
     expect(MysqlIndexChecker::VERSION).not_to be nil
   end
 
-  describe ".enable_raise_error_on_missing_index" do
+  describe ".watch_queries" do
     around(:each) do |example|
-      described_class.raise_error_on_missing_index do
+      @aggregator = MysqlIndexChecker::Aggregator.new
+      described_class.watch_queries(aggregator: @aggregator) do
         example.run
       end
     end
 
     context "when a query does not use an index" do
       it "raises MissingIndex " do
-        begin
-          User.find_by(name: "lala")
+        User.find_by(name: "lala")
 
-          raise "this test should have raised an error"
-        rescue described_class::MissingIndex => e
-          expect(e.message).to include("WHERE `users`.`name` = 'lala'")
-        end
+        expect(@aggregator.results[:critical]['User Load'])
+          .to include("WHERE `users`.`name` = 'lala'")
       end
     end
 

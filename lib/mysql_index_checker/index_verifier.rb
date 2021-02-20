@@ -25,17 +25,25 @@ module MysqlIndexChecker
 
     attr_reader :queries_missing_index
 
-    def initialize
+    def initialize(aggregator: Aggregator.new)
       @queries_missing_index = []
+      @aggregator = aggregator
     end
 
     def call(_name, _start, _finish, _message_id, values)
       sql = values[:sql]
+      query_identifier = values[:name]
       return unless analyse_query?(sql: sql, name: values[:name])
 
       # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
       results = ActiveRecord::Base.connection.query("explain #{sql}")
-      raise MissingIndex, "query: #{sql}, result: #{results}" if results.any? { |result| missing_index?(result) }
+      results.each do |result|
+        analyse_explain(
+          result: result,
+          identifier: query_identifier,
+          query: sql
+        )
+      end
     end
 
     private
@@ -48,15 +56,21 @@ module MysqlIndexChecker
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
-    def missing_index?(result)
+    def analyse_explain(result:, identifier:, query:)
       _id, _select_type, _table, _partitions, type, possible_keys, key, _key_len,
         _ref, _rows, _filtered, extra = result
 
-      return false if type == "ref"
-      return false if ALLOWED_EXTRA_VALUES.any? { |value| extra&.include?(value) }
+      return if type == "ref"
+      return if ALLOWED_EXTRA_VALUES.any? { |value| extra&.include?(value) }
 
-      return true if possible_keys.nil?
-      return true if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
+      if possible_keys.nil?
+        @aggregator.add(identifier: identifier, level: :critical, query: query)
+        return
+      end
+
+      if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
+        @aggregator.add(identifier: identifier, level: :warning, query: query)
+      end
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
