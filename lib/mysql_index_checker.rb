@@ -22,4 +22,8 @@ module MysqlIndexChecker
 
     ActiveSupport::Notifications.unsubscribe(subscriber)
   end
+
+  def results
+    aggregator.results
+  end
 end
