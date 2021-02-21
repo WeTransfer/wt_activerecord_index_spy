@@ -64,12 +64,12 @@ module MysqlIndexChecker
       return if ALLOWED_EXTRA_VALUES.any? { |value| extra&.include?(value) }
 
       if possible_keys.nil?
-        @aggregator.add(identifier: identifier, level: :critical, query: query)
+        @aggregator.add_critical(identifier: identifier, query: query)
         return
       end
 
       if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
-        @aggregator.add(identifier: identifier, level: :warning, query: query)
+        @aggregator.add_warning(identifier: identifier, query: query)
       end
     end
     # rubocop:enable Metrics/CyclomaticComplexity
