@@ -1,0 +1,24 @@
+<html>
+  <body>
+    <table>
+      <thead>
+        <td>Level</td>
+        <td>identifier</td>
+        <td>Query</td>
+      </thead>
+      <tbody>
+        <% [:criticals, :warnings].each do |level| -%>
+          <% results.send(level).each do |identifier, queries| -%>
+            <% queries.each do |query| -%>
+              <tr>
+                <td><%= level[0..-2] %></td>
+                <td><%= identifier %></td>
+                <td><%= query %></td>
+              </tr>
+            <% end -%>
+          <% end -%>
+        <% end -%>
+      </tbody>
+    </table>
+  </body>
+</html>
