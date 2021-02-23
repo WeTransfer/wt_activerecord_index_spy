@@ -21,7 +21,7 @@ module MysqlIndexChecker
       @results.warnings[identifier].add(query)
     end
 
-    def html_results(file=default_html_output_file, stdout: $stdout)
+    def export_html_results(file=default_html_output_file, stdout: $stdout)
       content = ERB
         .new(
           File.read(File.join(File.dirname(__FILE__), './results.html.erb')),

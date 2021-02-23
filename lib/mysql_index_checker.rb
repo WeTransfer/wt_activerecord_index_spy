@@ -23,7 +23,7 @@ module MysqlIndexChecker
     ActiveSupport::Notifications.unsubscribe(subscriber)
   end
 
-  def html_results
-    aggregator.html_results
+  def export_html_results
+    aggregator.export_html_results
   end
 end

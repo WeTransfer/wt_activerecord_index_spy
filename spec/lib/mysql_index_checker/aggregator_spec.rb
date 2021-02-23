@@ -20,7 +20,7 @@ RSpec.describe MysqlIndexChecker::Aggregator do
     end
   end
 
-  describe '#html_results' do
+  describe '#export_html_results' do
     it 'returns an html with results' do
       aggregator = described_class.new
       aggregator.add_critical(identifier: 'aa', query: 'SELECT 1')
@@ -30,7 +30,7 @@ RSpec.describe MysqlIndexChecker::Aggregator do
 
       file = Tempfile.new
       stdout_spy = spy
-      html = aggregator.html_results(file, stdout: stdout_spy)
+      html = aggregator.export_html_results(file, stdout: stdout_spy)
       file.open
       file.rewind
       html = file.read
