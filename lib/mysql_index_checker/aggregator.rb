@@ -1,4 +1,5 @@
 require 'erb'
+require 'tmpdir'
 
 module MysqlIndexChecker
   class Aggregator
@@ -20,13 +21,26 @@ module MysqlIndexChecker
       @results.warnings[identifier].add(query)
     end
 
-    def html_results
-      ERB
+    def html_results(file=default_html_output_file, stdout: $stdout)
+      content = ERB
         .new(
           File.read(File.join(File.dirname(__FILE__), './results.html.erb')),
           trim_mode: '-'
         )
         .result_with_hash(results: @results)
+
+      file.write(content)
+      file.close
+      stdout.puts "Report exported to #{file.path}"
+    end
+
+    private
+
+    def default_html_output_file
+      File.new(
+        File.join(Dir.tmpdir, 'mysql-index-checker-results.html'),
+        'w'
+      )
     end
   end
 end

@@ -1,3 +1,5 @@
+require 'tempfile'
+
 RSpec.describe MysqlIndexChecker::Aggregator do
   describe '#add_critical' do
     it 'saves unique queries to result' do
@@ -26,12 +28,19 @@ RSpec.describe MysqlIndexChecker::Aggregator do
       aggregator.add_critical(identifier: 'bb', query: 'SELECT 1')
       aggregator.add_warning(identifier: 'aa', query: 'SELECT 1')
 
-      html = aggregator.html_results
+      file = Tempfile.new
+      stdout_spy = spy
+      html = aggregator.html_results(file, stdout: stdout_spy)
+      file.open
+      file.rewind
+      html = file.read
 
       expect(html).to match(%r|<td>critical</td>\n.+<td>aa</td>\n.+<td>SELECT 1</td>|)
       expect(html).to match(%r|<td>critical</td>\n.+<td>aa</td>\n.+<td>SELECT 2</td>|)
       expect(html).to match(%r|<td>critical</td>\n.+<td>bb</td>\n.+<td>SELECT 1</td>|)
       expect(html).to match(%r|<td>warning</td>\n.+<td>aa</td>\n.+<td>SELECT 1</td>|)
+
+      expect(stdout_spy).to have_received(:puts).with(/Report exported to/)
     end
   end
 end
