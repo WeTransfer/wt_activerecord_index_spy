@@ -36,6 +36,7 @@ module MysqlIndexChecker
       return unless analyse_query?(sql: sql, name: values[:name])
 
       # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
+      #TODO: skip queries already analysed
       results = ActiveRecord::Base.connection.query("explain #{sql}")
       results.each do |result|
         analyse_explain(
