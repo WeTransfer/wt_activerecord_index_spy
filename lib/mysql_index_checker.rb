@@ -18,9 +18,11 @@ module MysqlIndexChecker
     subscriber = ActiveSupport::Notifications
                  .subscribe("sql.active_record", index_verifier)
 
-    yield
+    if block_given?
+      yield
 
-    ActiveSupport::Notifications.unsubscribe(subscriber)
+      ActiveSupport::Notifications.unsubscribe(subscriber)
+    end
   end
 
   def export_html_results
