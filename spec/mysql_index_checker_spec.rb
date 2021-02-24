@@ -94,5 +94,18 @@ RSpec.describe MysqlIndexChecker do
           .to include('WHERE `users`.`city_id` IN')
       end
     end
+
+    context "when the same query runs more than once" do
+      it 'analyses only the first one' do
+        expect(ActiveRecord::Base.connection)
+          .to receive(:query)
+          .with(a_string_including('explain'))
+          .once
+          .and_call_original
+
+        User.find_by(name: "lala")
+        User.find_by(name: "lala")
+      end
+    end
   end
 end

@@ -28,16 +28,19 @@ module MysqlIndexChecker
     def initialize(aggregator: Aggregator.new)
       @queries_missing_index = []
       @aggregator = aggregator
+      @queries_analised = Set.new
     end
 
     def call(_name, _start, _finish, _message_id, values)
       sql = values[:sql]
       query_identifier = values[:name]
       return unless analyse_query?(sql: sql, name: values[:name])
+      return if @queries_analised.include?(sql)
 
       # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
-      #TODO: skip queries already analysed
       results = ActiveRecord::Base.connection.query("explain #{sql}")
+      @queries_analised << sql
+
       results.each do |result|
         analyse_explain(
           result: result,
