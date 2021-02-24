@@ -35,6 +35,10 @@ module MysqlIndexChecker
       sql = values[:sql]
       query_identifier = values[:name]
       return unless analyse_query?(sql: sql, name: values[:name])
+      # TODO: this could be more intelligent to not duplicate similar queries
+      # with different WHERE values, example:
+      # - WHERE lala = 1 AND popo = 1
+      # - WHERE lala = 2 AND popo = 2
       return if @queries_analised.include?(sql)
 
       # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html

@@ -13,6 +13,10 @@ module MysqlIndexChecker
 
     def add_critical(identifier:, query:)
       @results.criticals[identifier] ||= Set.new
+      # TODO: this could be more intelligent to not duplicate similar queries
+      # with different WHERE values, example:
+      # - WHERE lala = 1 AND popo = 1
+      # - WHERE lala = 2 AND popo = 2
       @results.criticals[identifier].add(query)
     end
 
