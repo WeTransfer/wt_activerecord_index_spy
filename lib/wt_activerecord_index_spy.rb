@@ -6,7 +6,7 @@ require_relative "wt_activerecord_index_spy/index_verifier"
 
 # This is the top level module which requires everything
 module WtActiverecordIndexSpy
-  extend self
+  module_function
 
   def aggregator
     @aggregator ||= Aggregator.new
@@ -18,11 +18,11 @@ module WtActiverecordIndexSpy
     subscriber = ActiveSupport::Notifications
                  .subscribe("sql.active_record", index_verifier)
 
-    if block_given?
-      yield
+    return unless block_given?
 
-      ActiveSupport::Notifications.unsubscribe(subscriber)
-    end
+    yield
+
+    ActiveSupport::Notifications.unsubscribe(subscriber)
   end
 
   def export_html_results

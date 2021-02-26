@@ -46,11 +46,7 @@ module WtActiverecordIndexSpy
       @queries_analised << sql
 
       results.each do |result|
-        analyse_explain(
-          result: result,
-          identifier: query_identifier,
-          query: sql
-        )
+        analyse_explain(result: result, identifier: query_identifier, query: sql)
       end
     end
 
@@ -64,6 +60,7 @@ module WtActiverecordIndexSpy
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/MethodLength
     def analyse_explain(result:, identifier:, query:)
       _id, _select_type, _table, _partitions, type, possible_keys, key, _key_len,
         _ref, _rows, _filtered, extra = result
@@ -76,12 +73,15 @@ module WtActiverecordIndexSpy
         return
       end
 
+      # rubocop:disable Style/GuardClause
       if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
         @aggregator.add_warning(identifier: identifier, query: query)
       end
+      # rubocop:enable Style/GuardClause
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/MethodLength
 
     def analyse_query?(name:, sql:)
       # FIXME: this seems bad. we should probably have a better way to indicate

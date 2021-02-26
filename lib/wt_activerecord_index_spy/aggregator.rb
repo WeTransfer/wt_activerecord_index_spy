@@ -1,7 +1,12 @@
-require 'erb'
-require 'tmpdir'
+# frozen_string_literal: true
+
+require "erb"
+require "tmpdir"
 
 module WtActiverecordIndexSpy
+  # This class aggregates all queries that were considered not using index.
+  # Since it's not possible to be sure for every query, it separated them in
+  # different levels, such as warnings and criticals.
   class Aggregator
     attr_reader :results
 
@@ -25,13 +30,13 @@ module WtActiverecordIndexSpy
       @results.warnings[identifier].add(query)
     end
 
-    def export_html_results(file=default_html_output_file, stdout: $stdout)
+    def export_html_results(file = default_html_output_file, stdout: $stdout)
       content = ERB
-        .new(
-          File.read(File.join(File.dirname(__FILE__), './results.html.erb')),
-          trim_mode: '-'
-        )
-        .result_with_hash(results: @results)
+                .new(
+                  File.read(File.join(File.dirname(__FILE__), "./results.html.erb")),
+                  trim_mode: "-"
+                )
+                .result_with_hash(results: @results)
 
       file.write(content)
       file.close
@@ -42,8 +47,8 @@ module WtActiverecordIndexSpy
 
     def default_html_output_file
       File.new(
-        File.join(Dir.tmpdir, 'wt_activerecord_index_spy-results.html'),
-        'w'
+        File.join(Dir.tmpdir, "wt_activerecord_index_spy-results.html"),
+        "w"
       )
     end
   end

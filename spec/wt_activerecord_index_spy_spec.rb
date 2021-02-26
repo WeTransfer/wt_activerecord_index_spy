@@ -17,7 +17,7 @@ RSpec.describe WtActiverecordIndexSpy do
       it "adds the query to the critical list" do
         User.find_by(name: "lala")
 
-        expect(@aggregator.results.criticals['User Load'].first)
+        expect(@aggregator.results.criticals["User Load"].first)
           .to include("WHERE `users`.`name` = 'lala'")
       end
     end
@@ -47,8 +47,8 @@ RSpec.describe WtActiverecordIndexSpy do
 
         User.find_by(age: 20, name: "popo")
 
-        expect(@aggregator.results.criticals['User Load'].first)
-          .to include('WHERE `users`.`age` = 20')
+        expect(@aggregator.results.criticals["User Load"].first)
+          .to include("WHERE `users`.`age` = 20")
       end
     end
 
@@ -90,16 +90,16 @@ RSpec.describe WtActiverecordIndexSpy do
         User.where(city_id: cities).to_a
 
         expect(@aggregator.results.criticals).to eq({})
-        expect(@aggregator.results.warnings['User Load'].first)
-          .to include('WHERE `users`.`city_id` IN')
+        expect(@aggregator.results.warnings["User Load"].first)
+          .to include("WHERE `users`.`city_id` IN")
       end
     end
 
     context "when the same query runs more than once" do
-      it 'analyses only the first one' do
+      it "analyses only the first one" do
         expect(ActiveRecord::Base.connection)
           .to receive(:query)
-          .with(a_string_including('explain'))
+          .with(a_string_including("explain"))
           .once
           .and_call_original
 
