@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'tempfile'
+require "tempfile"
 
 RSpec.describe WtActiverecordIndexSpy do
   it "has a version number" do
@@ -113,7 +113,7 @@ RSpec.describe WtActiverecordIndexSpy do
   end
 
   describe ".export_html_results" do
-    it 'adds a line with the correct origin in the HTML report' do
+    it "adds a line with the correct origin in the HTML report" do
       described_class.watch_queries do
         User.find_by(name: "lala")
       end

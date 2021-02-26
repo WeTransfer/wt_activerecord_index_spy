@@ -31,18 +31,22 @@ module WtActiverecordIndexSpy
       @analysed_queries = Set.new
     end
 
+    # TODO: refactor me pls to remove all these Rubocop warnings!
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/MethodLength
     def call(_name, _start, _finish, _message_id, values)
       query = values[:sql]
       identifier = values[:name]
       return if ignore_query?(query: query, name: identifier)
 
-      origin = caller.find { |line| !line.include?('/gems/') }
+      origin = caller.find { |line| !line.include?("/gems/") }
 
-      if WtActiverecordIndexSpy.ignore_queries_originated_in_test_code
+      if WtActiverecordIndexSpy.ignore_queries_originated_in_test_code && origin.include?("_spec")
         # Hopefully, it will get the line which executed the query.
         # It ignores activerecord, activesupport and other gem frames.
         # Maybe there is a better way to achieve it
-        return if origin.include?('_spec')
+        return
       end
 
       # TODO: this could be more intelligent to not duplicate similar queries
@@ -56,14 +60,18 @@ module WtActiverecordIndexSpy
       @analysed_queries << query
 
       results.each do |result|
-        if level = analyse_explain(result)
-          @aggregator.send(
-            "add_#{level}",
-            Aggregator::Item.new(identifier: identifier, query: query, origin: reduce_origin(origin))
-          )
-        end
+        level = analyse_explain(result)
+        next unless level
+
+        @aggregator.send(
+          "add_#{level}",
+          Aggregator::Item.new(identifier: identifier, query: query, origin: reduce_origin(origin))
+        )
       end
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/MethodLength
 
     private
 
@@ -75,8 +83,8 @@ module WtActiverecordIndexSpy
 
     def reduce_origin(origin)
       origin[0...origin.rindex(":")]
-        .split('/')[-2..-1]
-        .join('/')
+        .split("/")[-2..-1]
+        .join("/")
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity

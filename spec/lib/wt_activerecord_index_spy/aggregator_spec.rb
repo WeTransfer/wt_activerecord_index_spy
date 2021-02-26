@@ -25,10 +25,10 @@ module WtActiverecordIndexSpy
     describe "#export_html_results" do
       it "returns an html with results" do
         aggregator = described_class.new
-        aggregator.add_critical(build_item(identifier: "aa", query: "SELECT 1", origin: 'lala.rb'))
-        aggregator.add_critical(build_item(identifier: "aa", query: "SELECT 2", origin: 'lala.rb'))
-        aggregator.add_critical(build_item(identifier: "bb", query: "SELECT 1", origin: 'popo.rb'))
-        aggregator.add_warning(build_item(identifier: "aa", query: "SELECT 1", origin: 'popo.rb'))
+        aggregator.add_critical(build_item(identifier: "aa", query: "SELECT 1", origin: "lala.rb"))
+        aggregator.add_critical(build_item(identifier: "aa", query: "SELECT 2", origin: "lala.rb"))
+        aggregator.add_critical(build_item(identifier: "bb", query: "SELECT 1", origin: "popo.rb"))
+        aggregator.add_warning(build_item(identifier: "aa", query: "SELECT 1", origin: "popo.rb"))
 
         file = Tempfile.new
         stdout_spy = spy

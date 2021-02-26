@@ -17,3 +17,6 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
+
+Style/ModuleFunction:
+  EnforcedStyle: extend_self
