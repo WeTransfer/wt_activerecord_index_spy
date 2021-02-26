@@ -30,7 +30,7 @@ module WtActiverecordIndexSpy
     end
 
     def export_html_results(file, stdout: $stdout)
-      file = file || default_html_output_file
+      file ||= default_html_output_file
       content = ERB
                 .new(
                   File.read(File.join(File.dirname(__FILE__), "./results.html.erb")),
