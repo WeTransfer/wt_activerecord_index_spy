@@ -6,7 +6,9 @@ require_relative "wt_activerecord_index_spy/index_verifier"
 
 # This is the top level module which requires everything
 module WtActiverecordIndexSpy
-  module_function
+  extend self
+
+  attr_accessor :ignore_queries_originated_in_test_code
 
   def aggregator
     @aggregator ||= Aggregator.new
@@ -29,3 +31,5 @@ module WtActiverecordIndexSpy
     aggregator.export_html_results
   end
 end
+
+WtActiverecordIndexSpy.ignore_queries_originated_in_test_code = true

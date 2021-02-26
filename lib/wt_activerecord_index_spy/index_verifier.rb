@@ -35,6 +35,15 @@ module WtActiverecordIndexSpy
       sql = values[:sql]
       query_identifier = values[:name]
       return unless analyse_query?(sql: sql, name: values[:name])
+      origin = caller.find { |line| !line.include?('/gems/') }
+
+      if WtActiverecordIndexSpy.ignore_queries_originated_in_test_code
+        # Hopefully, it will get the line which executed the query.
+        # It ignores activerecord, activesupport and other gem frames.
+        # Maybe there is a better way to achieve it
+        return if origin.include?('_spec')
+      end
+
       # TODO: this could be more intelligent to not duplicate similar queries
       # with different WHERE values, example:
       # - WHERE lala = 1 AND popo = 1
