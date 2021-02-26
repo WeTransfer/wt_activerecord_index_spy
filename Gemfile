@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in mysql_index_checker.gemspec
+# Specify your gem's dependencies in wt_activerecord_index_spy.gemspec
 gemspec
 
 gem "rake", "~> 13.0"

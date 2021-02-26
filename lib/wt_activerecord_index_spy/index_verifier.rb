@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module MysqlIndexChecker
+module WtActiverecordIndexSpy
   MissingIndex = Class.new(StandardError)
 
   # This class can be used to subscribe to an activerecord "sql.active_record"

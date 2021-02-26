@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative "mysql_index_checker/version"
-require_relative "mysql_index_checker/aggregator"
-require_relative "mysql_index_checker/index_verifier"
+require_relative "wt_activerecord_index_spy/version"
+require_relative "wt_activerecord_index_spy/aggregator"
+require_relative "wt_activerecord_index_spy/index_verifier"
 
 # This is the top level module which requires everything
-module MysqlIndexChecker
+module WtActiverecordIndexSpy
   extend self
 
   def aggregator

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe MysqlIndexChecker do
+RSpec.describe WtActiverecordIndexSpy do
   it "has a version number" do
-    expect(MysqlIndexChecker::VERSION).not_to be nil
+    expect(WtActiverecordIndexSpy::VERSION).not_to be nil
   end
 
   describe ".watch_queries" do
     around(:each) do |example|
-      @aggregator = MysqlIndexChecker::Aggregator.new
+      @aggregator = WtActiverecordIndexSpy::Aggregator.new
       described_class.watch_queries(aggregator: @aggregator) do
         example.run
       end

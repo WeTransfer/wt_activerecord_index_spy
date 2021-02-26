@@ -4,7 +4,7 @@
 require "dotenv/load"
 Dotenv.load
 
-require "mysql_index_checker"
+require "wt_activerecord_index_spy"
 require "active_record"
 
 # ActiveRecord::Base.logger = Logger.new(STDOUT)
@@ -27,7 +27,7 @@ RSpec.configure do |config|
       host: "localhost",
       username: ENV.fetch("DB_USER", "root"),
       password: ENV.fetch("DB_PASSWORD", "root"),
-      database: "mysql_index_checker_test"
+      database: "wt_activerecord_index_spy_test"
     }
     # TODO: the must be a better way to create and connect to the database
     ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
@@ -63,7 +63,7 @@ RSpec.configure do |config|
   end
 
   config.after :all do
-    ActiveRecord::Base.connection.drop_database("mysql_index_checker_test")
+    ActiveRecord::Base.connection.drop_database("wt_activerecord_index_spy_test")
   end
 
   config.expect_with :rspec do |c|

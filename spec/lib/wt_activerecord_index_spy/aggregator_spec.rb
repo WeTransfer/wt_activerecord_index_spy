@@ -1,6 +1,6 @@
 require 'tempfile'
 
-RSpec.describe MysqlIndexChecker::Aggregator do
+RSpec.describe WtActiverecordIndexSpy::Aggregator do
   describe '#add_critical' do
     it 'saves unique queries to result' do
       aggregator = described_class.new

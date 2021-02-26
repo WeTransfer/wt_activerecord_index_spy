@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
-require_relative "lib/mysql_index_checker/version"
+require_relative "lib/wt_activerecord_index_spy/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "mysql_index_checker"
-  spec.version       = MysqlIndexChecker::VERSION
+  spec.name          = "wt_activerecord_index_spy"
+  spec.version       = WtActiverecordIndexSpy::VERSION
   spec.authors       = ["Fabio Perrella"]
   spec.email         = ["fabio.perrella@gmail.com"]
 
   spec.summary       = "It checks if queries use an index"
   spec.description   = "It uses activerecord's notifications to run an explain" \
   " query on each query that uses a WHERE statement"
-  spec.homepage      = "https://github.com/fabioperrella/mysql_index_checker"
+  spec.homepage      = "https://github.com/fabioperrella/wt_activerecord_index_spy"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.4.0")
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/fabioperrella/mysql_index_checker"
-  spec.metadata["changelog_uri"] = "https://github.com/fabioperrella/mysql_index_checker/blob/main/CHANGELOG.md"
+  spec.metadata["source_code_uri"] = "https://github.com/fabioperrella/wt_activerecord_index_spy"
+  spec.metadata["changelog_uri"] = "https://github.com/fabioperrella/wt_activerecord_index_spy/blob/main/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -30,12 +30,11 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   spec.add_dependency "activesupport", "~> 6.0"
+  spec.add_dependency "activerecord", "~> 6.0"
 
-  spec.add_development_dependency "activerecord", "~> 6.0"
   spec.add_development_dependency "dotenv"
   spec.add_development_dependency "mysql2"
   spec.add_development_dependency "pry-byebug"
-
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
 end

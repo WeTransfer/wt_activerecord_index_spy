@@ -1,7 +1,7 @@
 require 'erb'
 require 'tmpdir'
 
-module MysqlIndexChecker
+module WtActiverecordIndexSpy
   class Aggregator
     attr_reader :results
 
@@ -42,7 +42,7 @@ module MysqlIndexChecker
 
     def default_html_output_file
       File.new(
-        File.join(Dir.tmpdir, 'mysql-index-checker-results.html'),
+        File.join(Dir.tmpdir, 'wt_activerecord_index_spy-results.html'),
         'w'
       )
     end
