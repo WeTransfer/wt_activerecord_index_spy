@@ -27,8 +27,8 @@ module WtActiverecordIndexSpy
     ActiveSupport::Notifications.unsubscribe(subscriber)
   end
 
-  def export_html_results
-    aggregator.export_html_results
+  def export_html_results(file = nil, stdout: $stdout)
+    aggregator.export_html_results(file, stdout: stdout)
   end
 end
 

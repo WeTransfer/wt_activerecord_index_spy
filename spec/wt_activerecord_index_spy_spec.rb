@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'tempfile'
+
 RSpec.describe WtActiverecordIndexSpy do
   it "has a version number" do
     expect(WtActiverecordIndexSpy::VERSION).not_to be nil
@@ -107,6 +109,24 @@ RSpec.describe WtActiverecordIndexSpy do
         User.find_by(name: "lala")
         User.find_by(name: "lala")
       end
+    end
+  end
+
+  describe ".export_html_results" do
+    it 'adds a line with the correct origin in the HTML report' do
+      described_class.watch_queries do
+        User.find_by(name: "lala")
+      end
+
+      file = Tempfile.new
+      described_class.export_html_results(file, stdout: spy)
+      file.open
+      file.rewind
+      html = file.read
+
+      expect(html).to match(%r{<td>critical</td>\n.+<td>User Load</td>})
+      expect(html).to match(%r{<td>.+WHERE `users`.`name` = 'lala'.+</td>})
+      expect(html).to match(%r{<td>spec/wt_activerecord_index_spy_spec.rb:\d+</td>})
     end
   end
 end

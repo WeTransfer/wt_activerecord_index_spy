@@ -25,10 +25,10 @@ module WtActiverecordIndexSpy
     describe "#export_html_results" do
       it "returns an html with results" do
         aggregator = described_class.new
-        aggregator.add_critical(build_item(identifier: "aa", query: "SELECT 1"))
-        aggregator.add_critical(build_item(identifier: "aa", query: "SELECT 2"))
-        aggregator.add_critical(build_item(identifier: "bb", query: "SELECT 1"))
-        aggregator.add_warning(build_item(identifier: "aa", query: "SELECT 1"))
+        aggregator.add_critical(build_item(identifier: "aa", query: "SELECT 1", origin: 'lala.rb'))
+        aggregator.add_critical(build_item(identifier: "aa", query: "SELECT 2", origin: 'lala.rb'))
+        aggregator.add_critical(build_item(identifier: "bb", query: "SELECT 1", origin: 'popo.rb'))
+        aggregator.add_warning(build_item(identifier: "aa", query: "SELECT 1", origin: 'popo.rb'))
 
         file = Tempfile.new
         stdout_spy = spy
@@ -37,10 +37,10 @@ module WtActiverecordIndexSpy
         file.rewind
         html = file.read
 
-        expect(html).to match(%r{<td>critical</td>\n.+<td>aa</td>\n.+<td>SELECT 1</td>})
-        expect(html).to match(%r{<td>critical</td>\n.+<td>aa</td>\n.+<td>SELECT 2</td>})
-        expect(html).to match(%r{<td>critical</td>\n.+<td>bb</td>\n.+<td>SELECT 1</td>})
-        expect(html).to match(%r{<td>warning</td>\n.+<td>aa</td>\n.+<td>SELECT 1</td>})
+        expect(html).to match(%r{<td>critical</td>\n.+<td>aa</td>\n.+<td>SELECT 1</td>\n.+<td>lala.rb</td>})
+        expect(html).to match(%r{<td>critical</td>\n.+<td>aa</td>\n.+<td>SELECT 2</td>\n.+<td>lala.rb</td>})
+        expect(html).to match(%r{<td>critical</td>\n.+<td>bb</td>\n.+<td>SELECT 1</td>\n.+<td>popo.rb</td>})
+        expect(html).to match(%r{<td>warning</td>\n.+<td>aa</td>\n.+<td>SELECT 1</td>\n.+<td>popo.rb</td>})
 
         expect(stdout_spy).to have_received(:puts).with(/Report exported to/)
       end

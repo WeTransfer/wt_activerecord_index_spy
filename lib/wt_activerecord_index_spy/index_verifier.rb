@@ -59,7 +59,7 @@ module WtActiverecordIndexSpy
         if level = analyse_explain(result)
           @aggregator.send(
             "add_#{level}",
-            Aggregator::Item.new(identifier: identifier, query: query, origin: origin)
+            Aggregator::Item.new(identifier: identifier, query: query, origin: reduce_origin(origin))
           )
         end
       end
@@ -72,6 +72,12 @@ module WtActiverecordIndexSpy
       "Impossible WHERE noticed after reading const tables",
       "no matching row"
     ].freeze
+
+    def reduce_origin(origin)
+      origin[0...origin.rindex(":")]
+        .split('/')[-2..-1]
+        .join('/')
+    end
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
