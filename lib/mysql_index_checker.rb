@@ -8,30 +8,24 @@ require_relative "mysql_index_checker/index_verifier"
 module MysqlIndexChecker
   extend self
 
-  def watch_queries(aggregator: Aggregator.new)
+  def aggregator
+    @aggregator ||= Aggregator.new
+  end
+
+  def watch_queries(aggregator: self.aggregator)
     index_verifier = IndexVerifier.new(aggregator: aggregator)
 
     subscriber = ActiveSupport::Notifications
                  .subscribe("sql.active_record", index_verifier)
 
-    yield
+    if block_given?
+      yield
 
-    ActiveSupport::Notifications.unsubscribe(subscriber)
+      ActiveSupport::Notifications.unsubscribe(subscriber)
+    end
   end
 
-  def spy_queries_and_enqueue(aggregator: Aggregator.new)
-    @index_verifier = IndexVerifier.new(
-      aggregator: aggregator,
-      postpone_analysis: true
-    )
-
-    subscriber = ActiveSupport::Notifications
-                 .subscribe("sql.active_record", @index_verifier)
-  end
-
-  def analyse_enqueued_queries
-    @index_verifier.analyse_enqueued_queries
-
-    @index_verifier.aggregator
+  def export_html_results
+    aggregator.export_html_results
   end
 end

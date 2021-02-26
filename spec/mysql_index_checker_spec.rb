@@ -5,7 +5,7 @@ RSpec.describe MysqlIndexChecker do
     expect(MysqlIndexChecker::VERSION).not_to be nil
   end
 
-  describe ".analyse_queries" do
+  describe ".watch_queries" do
     around(:each) do |example|
       @aggregator = MysqlIndexChecker::Aggregator.new
       described_class.watch_queries(aggregator: @aggregator) do
@@ -106,24 +106,6 @@ RSpec.describe MysqlIndexChecker do
         User.find_by(name: "lala")
         User.find_by(name: "lala")
       end
-    end
-  end
-
-  describe ".spy_queries_and_enqueue" do
-    it 'does not analyse queries until calling results' do
-       described_class.spy_queries_and_enqueue
-
-       user1 = User.create(name: 'lala', age: 30)
-       user2 = User.create(name: 'popo', age: 30)
-
-       affected_rows = User.where(age: 30).update_all(city_id: 2)
-
-       expect(affected_rows).to eq(2)
-
-       # analyse queries
-       aggregator = described_class.analyse_enqueued_queries
-
-       expect(aggregator.results.criticals['User Update All'].count).to eq(1)
     end
   end
 end
