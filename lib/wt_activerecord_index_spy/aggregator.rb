@@ -11,23 +11,22 @@ module WtActiverecordIndexSpy
     attr_reader :results
 
     Result = Class.new(Struct.new(:criticals, :warnings, keyword_init: true))
+    Item = Struct.new(:identifier, :query, :origin, keyword_init: true)
 
     def initialize
-      @results = Result.new(criticals: {}, warnings: {})
+      @results = Result.new(criticals: Set.new, warnings: Set.new)
     end
 
-    def add_critical(identifier:, query:)
-      @results.criticals[identifier] ||= Set.new
+    def add_critical(item)
       # TODO: this could be more intelligent to not duplicate similar queries
       # with different WHERE values, example:
       # - WHERE lala = 1 AND popo = 1
       # - WHERE lala = 2 AND popo = 2
-      @results.criticals[identifier].add(query)
+      @results.criticals.add(item)
     end
 
-    def add_warning(identifier:, query:)
-      @results.warnings[identifier] ||= Set.new
-      @results.warnings[identifier].add(query)
+    def add_warning(item)
+      @results.warnings.add(item)
     end
 
     def export_html_results(file = default_html_output_file, stdout: $stdout)

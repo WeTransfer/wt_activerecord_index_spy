@@ -28,13 +28,14 @@ module WtActiverecordIndexSpy
     def initialize(aggregator: Aggregator.new)
       @queries_missing_index = []
       @aggregator = aggregator
-      @queries_analised = Set.new
+      @analysed_queries = Set.new
     end
 
     def call(_name, _start, _finish, _message_id, values)
-      sql = values[:sql]
-      query_identifier = values[:name]
-      return unless analyse_query?(sql: sql, name: values[:name])
+      query = values[:sql]
+      identifier = values[:name]
+      return if ignore_query?(query: query, name: identifier)
+
       origin = caller.find { |line| !line.include?('/gems/') }
 
       if WtActiverecordIndexSpy.ignore_queries_originated_in_test_code
@@ -48,14 +49,19 @@ module WtActiverecordIndexSpy
       # with different WHERE values, example:
       # - WHERE lala = 1 AND popo = 1
       # - WHERE lala = 2 AND popo = 2
-      return if @queries_analised.include?(sql)
+      return if @analysed_queries.include?(query)
 
       # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
-      results = ActiveRecord::Base.connection.query("explain #{sql}")
-      @queries_analised << sql
+      results = ActiveRecord::Base.connection.query("explain #{query}")
+      @analysed_queries << query
 
       results.each do |result|
-        analyse_explain(result: result, identifier: query_identifier, query: sql)
+        if level = analyse_explain(result)
+          @aggregator.send(
+            "add_#{level}",
+            Aggregator::Item.new(identifier: identifier, query: query, origin: origin)
+          )
+        end
       end
     end
 
@@ -69,37 +75,27 @@ module WtActiverecordIndexSpy
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
-    # rubocop:disable Metrics/MethodLength
-    def analyse_explain(result:, identifier:, query:)
+    def analyse_explain(result)
       _id, _select_type, _table, _partitions, type, possible_keys, key, _key_len,
         _ref, _rows, _filtered, extra = result
 
       return if type == "ref"
       return if ALLOWED_EXTRA_VALUES.any? { |value| extra&.include?(value) }
 
-      if possible_keys.nil?
-        @aggregator.add_critical(identifier: identifier, query: query)
-        return
-      end
-
-      # rubocop:disable Style/GuardClause
-      if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
-        @aggregator.add_warning(identifier: identifier, query: query)
-      end
-      # rubocop:enable Style/GuardClause
+      return :critical if possible_keys.nil?
+      return :warning if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
-    # rubocop:enable Metrics/MethodLength
 
-    def analyse_query?(name:, sql:)
+    def ignore_query?(name:, query:)
       # FIXME: this seems bad. we should probably have a better way to indicate
       # the query was cached
-      name != "CACHE" &&
-        name != "SCHEMA" &&
-        name.present? &&
-        sql.downcase.include?("where") &&
-        IGNORED_SQL.none? { |r| sql =~ r }
+      name == "CACHE" ||
+        name == "SCHEMA" ||
+        !name ||
+        !query.downcase.include?("where") ||
+        IGNORED_SQL.any? { |r| query =~ r }
     end
   end
 end

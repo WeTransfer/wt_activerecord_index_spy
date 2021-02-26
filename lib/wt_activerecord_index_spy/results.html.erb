@@ -8,14 +8,13 @@
       </thead>
       <tbody>
         <% [:criticals, :warnings].each do |level| -%>
-          <% results.send(level).each do |identifier, queries| -%>
-            <% queries.each do |query| -%>
-              <tr>
-                <td><%= level[0..-2] %></td>
-                <td><%= identifier %></td>
-                <td><%= query %></td>
-              </tr>
-            <% end -%>
+          <% results.send(level).each do |item| -%>
+            <tr>
+              <td><%= level[0..-2] %></td>
+              <td><%= item.identifier %></td>
+              <td><%= item.query %></td>
+              <td><%= item.origin %></td>
+            </tr>
           <% end -%>
         <% end -%>
       </tbody>

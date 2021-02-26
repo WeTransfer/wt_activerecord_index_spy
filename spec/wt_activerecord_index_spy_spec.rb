@@ -17,7 +17,7 @@ RSpec.describe WtActiverecordIndexSpy do
       it "adds the query to the critical list" do
         User.find_by(name: "lala")
 
-        expect(@aggregator.results.criticals["User Load"].first)
+        expect(@aggregator.results.criticals.first.query)
           .to include("WHERE `users`.`name` = 'lala'")
       end
     end
@@ -26,8 +26,8 @@ RSpec.describe WtActiverecordIndexSpy do
       it "does not add the query to result aggregator" do
         User.find_by(id: 1)
 
-        expect(@aggregator.results.criticals).to eq({})
-        expect(@aggregator.results.warnings).to eq({})
+        expect(@aggregator.results.criticals).to be_empty
+        expect(@aggregator.results.warnings).to be_empty
       end
     end
 
@@ -35,8 +35,8 @@ RSpec.describe WtActiverecordIndexSpy do
       it "does not add the query to result aggregator" do
         User.find_by(email: "aa@aa.com")
 
-        expect(@aggregator.results.criticals).to eq({})
-        expect(@aggregator.results.warnings).to eq({})
+        expect(@aggregator.results.criticals).to be_empty
+        expect(@aggregator.results.warnings).to be_empty
       end
     end
 
@@ -47,7 +47,7 @@ RSpec.describe WtActiverecordIndexSpy do
 
         User.find_by(age: 20, name: "popo")
 
-        expect(@aggregator.results.criticals["User Load"].first)
+        expect(@aggregator.results.criticals.first.query)
           .to include("WHERE `users`.`age` = 20")
       end
     end
@@ -58,8 +58,8 @@ RSpec.describe WtActiverecordIndexSpy do
 
         User.where(id: 1, email: "aa@aa.com", age: 20).to_a
 
-        expect(@aggregator.results.criticals).to eq({})
-        expect(@aggregator.results.warnings).to eq({})
+        expect(@aggregator.results.criticals).to be_empty
+        expect(@aggregator.results.warnings).to be_empty
       end
     end
 
@@ -71,8 +71,8 @@ RSpec.describe WtActiverecordIndexSpy do
 
         User.where(city_id: 1).to_a
 
-        expect(@aggregator.results.criticals).to eq({})
-        expect(@aggregator.results.warnings).to eq({})
+        expect(@aggregator.results.criticals).to be_empty
+        expect(@aggregator.results.warnings).to be_empty
       end
     end
 
@@ -89,8 +89,9 @@ RSpec.describe WtActiverecordIndexSpy do
         cities = City.where(name: "Santo Andre")
         User.where(city_id: cities).to_a
 
-        expect(@aggregator.results.criticals).to eq({})
-        expect(@aggregator.results.warnings["User Load"].first)
+        expect(@aggregator.results.criticals.count).to eq(0)
+        expect(@aggregator.results.warnings.first.identifier).to eq("User Load")
+        expect(@aggregator.results.warnings.first.query)
           .to include("WHERE `users`.`city_id` IN")
       end
     end
