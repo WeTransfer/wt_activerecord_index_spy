@@ -29,7 +29,8 @@ module WtActiverecordIndexSpy
       @results.warnings.add(item)
     end
 
-    def export_html_results(file = default_html_output_file, stdout: $stdout)
+    def export_html_results(file, stdout: $stdout)
+      file = file || default_html_output_file
       content = ERB
                 .new(
                   File.read(File.join(File.dirname(__FILE__), "./results.html.erb")),
