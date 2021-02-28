@@ -39,6 +39,7 @@ module WtActiverecordIndexSpy
       query = values[:sql]
       logger.debug "query: #{query}"
       identifier = values[:name]
+
       if ignore_query?(query: query, name: identifier)
         logger.debug "query type ignored"
         return
@@ -69,11 +70,11 @@ module WtActiverecordIndexSpy
       @analysed_queries << query
 
       results.each do |result|
-        level = analyse_explain(result)
-        next unless level
+        criticality_level = analyse_explain(result)
+        next unless criticality_level
 
         @aggregator.send(
-          "add_#{level}",
+          "add_#{criticality_level}",
           Aggregator::Item.new(identifier: identifier, query: query, origin: reduce_origin(origin))
         )
       end
