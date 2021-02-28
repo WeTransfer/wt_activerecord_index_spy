@@ -10,7 +10,7 @@ module WtActiverecordIndexSpy
   class Aggregator
     attr_reader :results
 
-    Result = Class.new(Struct.new(:criticals, :warnings, keyword_init: true))
+    Result = Struct.new(:criticals, :warnings, keyword_init: true)
     Item = Struct.new(:identifier, :query, :origin, keyword_init: true)
 
     def initialize

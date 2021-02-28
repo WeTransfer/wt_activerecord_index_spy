@@ -110,6 +110,38 @@ RSpec.describe WtActiverecordIndexSpy do
         User.find_by(name: "lala")
       end
     end
+
+    context "when ignore_queries_originated_in_test_code=true" do
+      around do |example|
+        described_class.ignore_queries_originated_in_test_code = true
+        example.run
+        described_class.ignore_queries_originated_in_test_code = false
+      end
+
+      it 'ignores queries originated in test code' do
+        User.create(name: 'lala')
+        User.find_by(name: 'any')
+
+        expect(@aggregator.results.criticals.count).to eq(0)
+        expect(@aggregator.results.warnings.count).to eq(0)
+      end
+
+      it 'does not ignore queries originated outside tests' do
+        User.create(name: 'lala')
+        User.some_method_with_a_query_missing_index
+
+        expect(@aggregator.results.criticals.count).to eq(1)
+      end
+    end
+
+    context "when ignore_queries_originated_in_test_code=false" do
+      it 'does not ignore queries originated in test code' do
+        User.create(name: 'lala')
+        User.find_by(name: 'any')
+
+        expect(@aggregator.results.criticals.count).to eq(1)
+      end
+    end
   end
 
   describe ".export_html_results" do
