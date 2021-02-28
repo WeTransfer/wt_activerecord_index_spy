@@ -3,12 +3,13 @@
 require_relative "wt_activerecord_index_spy/version"
 require_relative "wt_activerecord_index_spy/aggregator"
 require_relative "wt_activerecord_index_spy/index_verifier"
+require 'logger'
 
 # This is the top level module which requires everything
 module WtActiverecordIndexSpy
   extend self
 
-  attr_accessor :ignore_queries_originated_in_test_code
+  attr_accessor :ignore_queries_originated_in_test_code, :logger
 
   def aggregator
     @aggregator ||= Aggregator.new
@@ -30,6 +31,11 @@ module WtActiverecordIndexSpy
   def export_html_results(file = nil, stdout: $stdout)
     aggregator.export_html_results(file, stdout: stdout)
   end
+
+  def boot
+    @ignore_queries_originated_in_test_code = true
+    @logger = Logger.new('/dev/null')
+  end
 end
 
-WtActiverecordIndexSpy.ignore_queries_originated_in_test_code = true
+WtActiverecordIndexSpy.boot

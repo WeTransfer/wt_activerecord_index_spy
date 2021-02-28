@@ -37,17 +37,26 @@ module WtActiverecordIndexSpy
     # rubocop:disable Metrics/MethodLength
     def call(_name, _start, _finish, _message_id, values)
       query = values[:sql]
+      logger.debug "query: #{query}"
       identifier = values[:name]
-      return if ignore_query?(query: query, name: identifier)
+      if ignore_query?(query: query, name: identifier)
+        logger.debug "query type ignored"
+        return
+      end
+      logger.debug "query type accepted"
 
       origin = caller.find { |line| !line.include?("/gems/") }
 
-      if WtActiverecordIndexSpy.ignore_queries_originated_in_test_code && origin.include?("_spec")
+      if WtActiverecordIndexSpy.ignore_queries_originated_in_test_code && (origin.include?("_spec") || origin.include?("_test"))
+
+        logger.debug "origin ignored: #{origin}"
         # Hopefully, it will get the line which executed the query.
         # It ignores activerecord, activesupport and other gem frames.
         # Maybe there is a better way to achieve it
         return
       end
+
+      logger.debug "origin accepted: #{origin}"
 
       # TODO: this could be more intelligent to not duplicate similar queries
       # with different WHERE values, example:
@@ -110,6 +119,10 @@ module WtActiverecordIndexSpy
         !name ||
         !query.downcase.include?("where") ||
         IGNORED_SQL.any? { |r| query =~ r }
+    end
+
+    def logger
+      WtActiverecordIndexSpy.logger
     end
   end
 end
