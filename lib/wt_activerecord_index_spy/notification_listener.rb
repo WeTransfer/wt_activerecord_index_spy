@@ -7,7 +7,7 @@ module WtActiverecordIndexSpy
   # notification.
   # It gets each query that uses a WHERE statement and runs a EXPLAIN query to
   # see if it uses an index.
-  class IndexVerifier
+  class NotificationListener
     IGNORED_SQL = [
       /^PRAGMA (?!(table_info))/,
       /^SELECT currval/,
