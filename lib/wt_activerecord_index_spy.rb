@@ -16,10 +16,10 @@ module WtActiverecordIndexSpy
   end
 
   def watch_queries(aggregator: self.aggregator)
-    index_verifier = NotificationListener.new(aggregator: aggregator)
+    notification_listener = NotificationListener.new(aggregator: aggregator)
 
     subscriber = ActiveSupport::Notifications
-                 .subscribe("sql.active_record", index_verifier)
+                 .subscribe("sql.active_record", notification_listener)
 
     return unless block_given?
 
