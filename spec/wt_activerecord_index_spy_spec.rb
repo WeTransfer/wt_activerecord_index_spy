@@ -142,6 +142,18 @@ RSpec.describe WtActiverecordIndexSpy do
         expect(@aggregator.results.criticals.count).to eq(1)
       end
     end
+
+    it 'does not affect "affected rows" of a query' do
+      pending 'I dont know yet how to fix this problem'
+
+      User.create(name: 'lala', city_id: 1)
+      User.create(name: 'popo', city_id: 1)
+      User.create(name: 'other', city_id: 2)
+
+      affetected_rows = User.where(city_id: 1).update_all(age: 30)
+
+      expect(affetected_rows).to eq(2)
+    end
   end
 
   describe ".export_html_results" do
