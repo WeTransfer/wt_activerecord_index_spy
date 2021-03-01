@@ -118,16 +118,16 @@ RSpec.describe WtActiverecordIndexSpy do
         described_class.ignore_queries_originated_in_test_code = false
       end
 
-      it 'ignores queries originated in test code' do
-        User.create(name: 'lala')
-        User.find_by(name: 'any')
+      it "ignores queries originated in test code" do
+        User.create(name: "lala")
+        User.find_by(name: "any")
 
         expect(@aggregator.results.criticals.count).to eq(0)
         expect(@aggregator.results.warnings.count).to eq(0)
       end
 
-      it 'does not ignore queries originated outside tests' do
-        User.create(name: 'lala')
+      it "does not ignore queries originated outside tests" do
+        User.create(name: "lala")
         User.some_method_with_a_query_missing_index
 
         expect(@aggregator.results.criticals.count).to eq(1)
@@ -135,20 +135,20 @@ RSpec.describe WtActiverecordIndexSpy do
     end
 
     context "when ignore_queries_originated_in_test_code=false" do
-      it 'does not ignore queries originated in test code' do
-        User.create(name: 'lala')
-        User.find_by(name: 'any')
+      it "does not ignore queries originated in test code" do
+        User.create(name: "lala")
+        User.find_by(name: "any")
 
         expect(@aggregator.results.criticals.count).to eq(1)
       end
     end
 
     it 'does not affect "affected rows" of a query' do
-      pending 'I dont know yet how to fix this problem'
+      pending "I dont know yet how to fix this problem"
 
-      User.create(name: 'lala', city_id: 1)
-      User.create(name: 'popo', city_id: 1)
-      User.create(name: 'other', city_id: 2)
+      User.create(name: "lala", city_id: 1)
+      User.create(name: "popo", city_id: 1)
+      User.create(name: "other", city_id: 2)
 
       affetected_rows = User.where(city_id: 1).update_all(age: 30)
 

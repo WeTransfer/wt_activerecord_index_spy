@@ -35,6 +35,7 @@ module WtActiverecordIndexSpy
     # rubocop:disable Metrics/AbcSize
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/PerceivedComplexity
     def call(_name, _start, _finish, _message_id, values)
       query = values[:sql]
       logger.debug "query: #{query}"
@@ -48,7 +49,8 @@ module WtActiverecordIndexSpy
 
       origin = caller.find { |line| !line.include?("/gems/") }
 
-      if WtActiverecordIndexSpy.ignore_queries_originated_in_test_code && (origin.include?("_spec") || origin.include?("_test"))
+      if WtActiverecordIndexSpy.ignore_queries_originated_in_test_code &&
+         (origin.include?("_spec") || origin.include?("_test"))
 
         logger.debug "origin ignored: #{origin}"
         # Hopefully, it will get the line which executed the query.
@@ -82,6 +84,7 @@ module WtActiverecordIndexSpy
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     private
 

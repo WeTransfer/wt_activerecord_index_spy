@@ -3,7 +3,7 @@
 require_relative "wt_activerecord_index_spy/version"
 require_relative "wt_activerecord_index_spy/aggregator"
 require_relative "wt_activerecord_index_spy/notification_listener"
-require 'logger'
+require "logger"
 
 # This is the top level module which requires everything
 module WtActiverecordIndexSpy
@@ -34,7 +34,7 @@ module WtActiverecordIndexSpy
 
   def boot
     @ignore_queries_originated_in_test_code = true
-    @logger = Logger.new('/dev/null')
+    @logger = Logger.new("/dev/null")
   end
 end
 
