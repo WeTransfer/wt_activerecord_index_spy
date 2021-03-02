@@ -5,15 +5,22 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby:
+          - 2.7
+          - 2.6
+          - 2.5
+          - 2.4
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.7.1
+        ruby-version: ${{ matrix.ruby }}
     - name: Run the default task
       run: |
         sudo systemctl start mysql.service
-        gem install bundler -v 2.2.6
+        gem install bundler
         bundle install
         bundle exec rake
