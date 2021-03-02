@@ -58,6 +58,15 @@ Where:
 - **Identifier**: is the query identifier reported `ActiveRecord` notification
 - **Origin**: is the line the query was fired. By default it ignores queries fired in test code. It's possible to change it setting `WtActiverecordIndexSpy.ignore_queries_originated_in_test_code = false`
 
+## Supported versions
+
+Currently, it supports only specific versions of Ruby, ActiveRecord and MySql:
+
+**Ruby**: 2.7
+
+**Mysql**: 5.7
+
+**ActiveRecord**: 6.1
 
 ## Development
 
