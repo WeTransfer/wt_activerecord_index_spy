@@ -58,6 +58,8 @@ Where:
 - **Identifier**: is the query identifier reported `ActiveRecord` notification
 - **Origin**: is the line the query was fired. By default it ignores queries fired in test code. It's possible to change it setting `WtActiverecordIndexSpy.ignore_queries_originated_in_test_code = false`
 
+TODO: expect { CreateBatch.call(items: items) }.to have_used_index
+
 ## Supported versions
 
 Currently, it supports only specific versions of Ruby, ActiveRecord and MySql:

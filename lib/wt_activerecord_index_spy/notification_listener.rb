@@ -65,6 +65,7 @@ module WtActiverecordIndexSpy
       # with different WHERE values, example:
       # - WHERE lala = 1 AND popo = 1
       # - WHERE lala = 2 AND popo = 2
+      # TODO: look values to see if there is an uninterpolated query
       return if @analysed_queries.include?(query)
 
       Thread.new do
@@ -113,8 +114,8 @@ module WtActiverecordIndexSpy
       return if type == "ref"
       return if ALLOWED_EXTRA_VALUES.any? { |value| extra&.include?(value) }
 
-      return :critical if possible_keys.nil?
-      return :warning if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
+      return :certain if possible_keys.nil?
+      return :uncertain if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
