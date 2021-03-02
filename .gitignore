@@ -12,3 +12,5 @@
 
 .env
 Gemfile.lock
+
+.ruby-version
