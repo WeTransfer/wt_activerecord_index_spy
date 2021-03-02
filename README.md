@@ -1,8 +1,8 @@
-# Mysql Index Checker
+# wt_activerecord_index_spy
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/wt_activerecord_index_spy`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A Ruby library to watch and analyze queries that run using ActiveRecord to check
+if they use a proper index.
+It subscribes to `sql.active_record` notification using `ActiveSupport::Notifications`.
 
 ## Installation
 
@@ -22,7 +22,28 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Add this line to enable it:
+
+```ruby
+WtActiverecordIndexSpy.watch_queries
+```
+
+After that, `wt_activerecord_index_spy` will run an `EXPLAIN` query for every query
+fired with ActiveRecord which has a `WHERE` condition.
+
+It's also possible to enable it in a specific context, using a block:
+
+```ruby
+WtActiverecordIndexSpy.watch_queries do
+  # some code...
+end
+```
+
+After that, you can generate a report with the results:
+
+```ruby
+WtActiverecordIndexSpy.export_html_results
+```
 
 ## Development
 
