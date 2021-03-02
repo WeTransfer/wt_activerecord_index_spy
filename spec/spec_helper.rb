@@ -27,7 +27,7 @@ RSpec.configure do |config|
   config.before :all do
     db_config = {
       adapter: "mysql2",
-      host: "localhost",
+      host: ENV.fetch("DB_HOST", "localhost"),
       username: ENV.fetch("DB_USER", "root"),
       password: ENV.fetch("DB_PASSWORD", "root"),
       database: "wt_activerecord_index_spy_test"
