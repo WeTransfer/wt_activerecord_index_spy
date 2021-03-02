@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   " query on each query that uses a WHERE statement"
   spec.homepage      = "https://github.com/fabioperrella/wt_activerecord_index_spy"
   spec.license       = "MIT"
-  spec.required_ruby_version = Gem::Requirement.new(">= 2.4.0")
+  spec.required_ruby_version = Gem::Requirement.new(">= 2.6.0")
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/fabioperrella/wt_activerecord_index_spy"
