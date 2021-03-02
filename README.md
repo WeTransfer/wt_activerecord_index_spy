@@ -1,7 +1,8 @@
 # wt_activerecord_index_spy
 
-A Ruby library to watch and analyze queries that run using ActiveRecord to check
+A Ruby library to watch and analyze queries that run using `ActiveRecord` to check
 if they use a proper index.
+
 It subscribes to `sql.active_record` notification using `ActiveSupport::Notifications`.
 
 ## Installation
@@ -29,7 +30,7 @@ WtActiverecordIndexSpy.watch_queries
 ```
 
 After that, `wt_activerecord_index_spy` will run an `EXPLAIN` query for every query
-fired with ActiveRecord which has a `WHERE` condition.
+fired with `ActiveRecord` that has a `WHERE` condition.
 
 It's also possible to enable it in a specific context, using a block:
 
@@ -44,6 +45,20 @@ After that, you can generate a report with the results:
 ```ruby
 WtActiverecordIndexSpy.export_html_results
 ```
+
+Which creates a table similar to this:
+
+| Level | Identifier | Query | Origin |
+| ----  | ---------- | ----- | ------ |
+| critical | User Load | SELECT `users`.* FROM `users` WHERE `users`.`name` = 'lala' LIMIT 1  | spec/wt_activerecord_index_spy_spec.rb:162 |
+| warning | User Load | SELECT `users`.* FROM `users` WHERE `users`.`city_id` IN (SELECT `cities`.`id` FROM `cities` WHERE `cities`.`name` = 'Santo Andre') | spec/wt_activerecord_index_spy_spec.rb:173 |
+
+Where:
+- **Level**: `critical` when an index is certain to be missing, or `warning` when it's not possible to be sure
+- **Identifier**: is the query identifier reported `ActiveRecord` notification
+- **Origin**: is the line the query was fired. By default it ignores queries fired in test code. It's possible to change it setting `WtActiverecordIndexSpy.ignore_queries_originated_in_test_code = false`
+
+
 
 ## Development
 
