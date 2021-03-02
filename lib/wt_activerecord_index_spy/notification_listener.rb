@@ -67,19 +67,23 @@ module WtActiverecordIndexSpy
       # - WHERE lala = 2 AND popo = 2
       return if @analysed_queries.include?(query)
 
-      # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
-      results = ActiveRecord::Base.connection.query("explain #{query}")
-      @analysed_queries << query
+      Thread.new do
+        # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
+        results = ActiveRecord::Base.connection_pool.with_connection do |conn|
+          conn.query("explain #{query}")
+        end
+        @analysed_queries << query
 
-      results.each do |result|
-        criticality_level = analyse_explain(result)
-        next unless criticality_level
+        results.each do |result|
+          criticality_level = analyse_explain(result)
+          next unless criticality_level
 
-        @aggregator.send(
-          "add_#{criticality_level}",
-          Aggregator::Item.new(identifier: identifier, query: query, origin: reduce_origin(origin))
-        )
-      end
+          @aggregator.send(
+            "add_#{criticality_level}",
+            Aggregator::Item.new(identifier: identifier, query: query, origin: reduce_origin(origin))
+          )
+        end
+      end.join
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/CyclomaticComplexity

@@ -144,8 +144,6 @@ RSpec.describe WtActiverecordIndexSpy do
     end
 
     it 'does not affect "affected rows" of a query' do
-      pending "I dont know yet how to fix this problem"
-
       User.create(name: "lala", city_id: 1)
       User.create(name: "popo", city_id: 1)
       User.create(name: "other", city_id: 2)
