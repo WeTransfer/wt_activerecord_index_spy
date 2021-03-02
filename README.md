@@ -62,7 +62,7 @@ Where:
 
 Currently, it supports only specific versions of Ruby, ActiveRecord and MySql:
 
-**Ruby**: 2.7
+**Ruby**: 2.7, 2.6
 
 **Mysql**: 5.7
 
