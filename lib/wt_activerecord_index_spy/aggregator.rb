@@ -10,10 +10,25 @@ module WtActiverecordIndexSpy
   class Aggregator
     attr_reader :results
 
-    Result = Struct.new(:certains, :uncertains, keyword_init: true)
+    Result = Struct.new(:certains, :uncertains, keyword_init: true) do
+      def empty?
+        certains.empty? && uncertains.empty?
+      end
+
+      def to_h
+        {
+          certains: certains.map(&:to_h),
+          uncertains: uncertains.map(&:to_h),
+        }
+      end
+    end
     Item = Struct.new(:identifier, :query, :origin, keyword_init: true)
 
     def initialize
+      @results = Result.new(certains: Set.new, uncertains: Set.new)
+    end
+
+    def reset
       @results = Result.new(certains: Set.new, uncertains: Set.new)
     end
 

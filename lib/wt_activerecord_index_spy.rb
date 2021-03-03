@@ -17,6 +17,7 @@ module WtActiverecordIndexSpy
   end
 
   def watch_queries(aggregator: self.aggregator)
+    aggregator.reset
     notification_listener = NotificationListener.new(aggregator: aggregator)
 
     subscriber = ActiveSupport::Notifications
@@ -31,6 +32,10 @@ module WtActiverecordIndexSpy
 
   def export_html_results(file = nil, stdout: $stdout)
     aggregator.export_html_results(file, stdout: stdout)
+  end
+
+  def results
+    aggregator.results
   end
 
   def boot
