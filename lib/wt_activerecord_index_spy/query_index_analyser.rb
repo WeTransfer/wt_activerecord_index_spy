@@ -1,9 +1,14 @@
+# frozen_string_literal: true
+
 module WtActiverecordIndexSpy
+  # It runs an EXPLAIN query given a query and analyses the result to see if
+  # some index is missing.
   class QueryIndexAnalyser
     def initialize
       @analysed_queries = Set.new
     end
 
+    # rubocop:disable Metrics/MethodLength
     def analyse(query)
       # TODO: this could be more intelligent to not duplicate similar queries
       # with different WHERE values, example:
@@ -24,6 +29,7 @@ module WtActiverecordIndexSpy
         end
       end.join.value
     end
+    # rubocop:enable Metrics/MethodLength
 
     private
 

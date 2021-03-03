@@ -33,9 +33,7 @@ module WtActiverecordIndexSpy
 
     # TODO: refactor me pls to remove all these Rubocop warnings!
     # rubocop:disable Metrics/AbcSize
-    # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/PerceivedComplexity
     def call(_name, _start, _finish, _message_id, values)
       query = values[:sql]
       logger.debug "query: #{query}"
@@ -61,17 +59,16 @@ module WtActiverecordIndexSpy
 
       logger.debug "origin accepted: #{origin}"
 
-      if criticality_level = @query_index_analyser.analyse(query)
-        @aggregator.send(
-          "add_#{criticality_level}",
-          Aggregator::Item.new(identifier: identifier, query: query, origin: reduce_origin(origin))
-        )
-      end
+      criticality_level = @query_index_analyser.analyse(query)
+      return unless criticality_level
+
+      @aggregator.send(
+        "add_#{criticality_level}",
+        Aggregator::Item.new(identifier: identifier, query: query, origin: reduce_origin(origin))
+      )
     end
     # rubocop:enable Metrics/AbcSize
-    # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/PerceivedComplexity
 
     private
 
@@ -87,7 +84,7 @@ module WtActiverecordIndexSpy
 
     def reduce_origin(origin)
       origin[0...origin.rindex(":")]
-        .split("/")[-2..-1]
+        .split("/")[-2..]
         .join("/")
     end
 
