@@ -5,7 +5,7 @@ module WtActiverecordIndexSpy
   # some index is missing.
   class QueryIndexAnalyser
     def initialize
-      @analysed_queries = Set.new
+      @analysed_queries = []
     end
 
     # rubocop:disable Metrics/MethodLength

@@ -98,20 +98,6 @@ RSpec.describe WtActiverecordIndexSpy do
       end
     end
 
-    context "when the same query runs more than once" do
-      it "analyses only the first one" do
-        pending "refactoring before fix it"
-        expect(ActiveRecord::Base.connection)
-          .to receive(:query)
-          .with(a_string_including("explain"))
-          .once
-          .and_call_original
-
-        User.find_by(name: "lala")
-        User.find_by(name: "lala")
-      end
-    end
-
     context "when ignore_queries_originated_in_test_code=true" do
       around do |example|
         described_class.ignore_queries_originated_in_test_code = true
