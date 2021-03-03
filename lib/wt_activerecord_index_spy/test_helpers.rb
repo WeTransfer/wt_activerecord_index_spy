@@ -4,7 +4,7 @@ module WtActiverecordIndexSpy
 
     matcher :have_used_index do |expected|
       match do |actual|
-        WtActiverecordIndexSpy.watch_queries
+        WtActiverecordIndexSpy.watch_queries(ignore_queries_originated_in_test_code: false)
         actual.call
         WtActiverecordIndexSpy.results.empty?
       end

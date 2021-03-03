@@ -10,15 +10,19 @@ require "logger"
 module WtActiverecordIndexSpy
   extend self
 
-  attr_accessor :ignore_queries_originated_in_test_code, :logger
+  attr_accessor :logger
 
   def aggregator
     @aggregator ||= Aggregator.new
   end
 
-  def watch_queries(aggregator: self.aggregator)
+  def watch_queries(aggregator: self.aggregator, ignore_queries_originated_in_test_code: true)
     aggregator.reset
-    notification_listener = NotificationListener.new(aggregator: aggregator)
+
+    notification_listener = NotificationListener.new(
+      aggregator: aggregator,
+      ignore_queries_originated_in_test_code: ignore_queries_originated_in_test_code
+    )
 
     subscriber = ActiveSupport::Notifications
                  .subscribe("sql.active_record", notification_listener)
@@ -39,7 +43,6 @@ module WtActiverecordIndexSpy
   end
 
   def boot
-    @ignore_queries_originated_in_test_code = true
     @logger = Logger.new("/dev/null")
   end
 end
