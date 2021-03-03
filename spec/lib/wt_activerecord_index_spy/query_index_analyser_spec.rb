@@ -7,7 +7,7 @@ RSpec.describe WtActiverecordIndexSpy::QueryIndexAnalyser do
         query = User.where(name: "lala").to_sql
 
         result = subject.analyse(query)
-        expect(result).to eq(:critical)
+        expect(result).to eq(:certain)
 
         result = subject.analyse(query)
         expect(result).to be_nil

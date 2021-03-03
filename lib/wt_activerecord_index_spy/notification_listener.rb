@@ -59,11 +59,11 @@ module WtActiverecordIndexSpy
 
       logger.debug "origin accepted: #{origin}"
 
-      criticality_level = @query_index_analyser.analyse(query)
-      return unless criticality_level
+      certainity_level = @query_index_analyser.analyse(query)
+      return unless certainity_level
 
       @aggregator.send(
-        "add_#{criticality_level}",
+        "add_#{certainity_level}",
         Aggregator::Item.new(identifier: identifier, query: query, origin: reduce_origin(origin))
       )
     end

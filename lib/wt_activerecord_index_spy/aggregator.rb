@@ -5,28 +5,28 @@ require "tmpdir"
 
 module WtActiverecordIndexSpy
   # This class aggregates all queries that were considered not using index.
-  # Since it's not possible to be sure for every query, it separated them in
-  # different levels, such as warnings and criticals.
+  # Since it's not possible to be sure for every query, it separates the result
+  # in certains and uncertains.
   class Aggregator
     attr_reader :results
 
-    Result = Struct.new(:criticals, :warnings, keyword_init: true)
+    Result = Struct.new(:certains, :uncertains, keyword_init: true)
     Item = Struct.new(:identifier, :query, :origin, keyword_init: true)
 
     def initialize
-      @results = Result.new(criticals: Set.new, warnings: Set.new)
+      @results = Result.new(certains: Set.new, uncertains: Set.new)
     end
 
-    def add_critical(item)
+    def add_certain(item)
       # TODO: this could be more intelligent to not duplicate similar queries
       # with different WHERE values, example:
       # - WHERE lala = 1 AND popo = 1
       # - WHERE lala = 2 AND popo = 2
-      @results.criticals.add(item)
+      @results.certains.add(item)
     end
 
-    def add_warning(item)
-      @results.warnings.add(item)
+    def add_uncertain(item)
+      @results.uncertains.add(item)
     end
 
     def export_html_results(file, stdout: $stdout)

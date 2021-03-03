@@ -28,8 +28,8 @@ module WtActiverecordIndexSpy
         end
 
         results.find do |result|
-          criticality_level = analyse_explain(result)
-          break criticality_level if criticality_level
+          certainity_level = analyse_explain(result)
+          break certainity_level if certainity_level
         end
       end.join.value
     end
@@ -53,8 +53,8 @@ module WtActiverecordIndexSpy
       return if type == "ref"
       return if ALLOWED_EXTRA_VALUES.any? { |value| extra&.include?(value) }
 
-      return :critical if possible_keys.nil?
-      return :warning if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
+      return :certain if possible_keys.nil?
+      return :uncertain if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity

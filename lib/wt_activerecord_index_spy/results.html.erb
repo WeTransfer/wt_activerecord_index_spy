@@ -8,7 +8,7 @@
         <td>Origin</td>
       </thead>
       <tbody>
-        <% [:criticals, :warnings].each do |level| -%>
+        <% [:certains, :uncertains].each do |level| -%>
           <% results.send(level).each do |item| -%>
             <tr>
               <td><%= level[0..-2] %></td>

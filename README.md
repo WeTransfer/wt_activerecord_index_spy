@@ -50,11 +50,11 @@ Which creates a table similar to this:
 
 | Level | Identifier | Query | Origin |
 | ----  | ---------- | ----- | ------ |
-| critical | User Load | SELECT `users`.* FROM `users` WHERE `users`.`name` = 'lala' LIMIT 1  | spec/wt_activerecord_index_spy_spec.rb:162 |
-| warning | User Load | SELECT `users`.* FROM `users` WHERE `users`.`city_id` IN (SELECT `cities`.`id` FROM `cities` WHERE `cities`.`name` = 'Santo Andre') | spec/wt_activerecord_index_spy_spec.rb:173 |
+| certain | User Load | SELECT `users`.* FROM `users` WHERE `users`.`name` = 'lala' LIMIT 1  | spec/wt_activerecord_index_spy_spec.rb:162 |
+| uncertain | User Load | SELECT `users`.* FROM `users` WHERE `users`.`city_id` IN (SELECT `cities`.`id` FROM `cities` WHERE `cities`.`name` = 'Santo Andre') | spec/wt_activerecord_index_spy_spec.rb:173 |
 
 Where:
-- **Level**: `critical` when an index is certain to be missing, or `warning` when it's not possible to be sure
+- **Level**: `certain` when an index is certain to be missing, or `uncertain` when it's not possible to be sure
 - **Identifier**: is the query identifier reported `ActiveRecord` notification
 - **Origin**: is the line the query was fired. By default it ignores queries fired in test code. It's possible to change it setting `WtActiverecordIndexSpy.ignore_queries_originated_in_test_code = false`
 
