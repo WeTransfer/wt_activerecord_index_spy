@@ -15,6 +15,7 @@ module WtActiverecordIndexSpy
       # - WHERE lala = 1 AND popo = 1
       # - WHERE lala = 2 AND popo = 2
       return if @analysed_queries.include?(query)
+
       @analysed_queries << query
 
       # We need a thread to use a different connection that it's used by the
