@@ -4,6 +4,7 @@ require_relative "wt_activerecord_index_spy/version"
 require_relative "wt_activerecord_index_spy/aggregator"
 require_relative "wt_activerecord_index_spy/query_index_analyser"
 require_relative "wt_activerecord_index_spy/notification_listener"
+require_relative "wt_activerecord_index_spy/test_helpers"
 require "logger"
 
 # This is the top level module which requires everything

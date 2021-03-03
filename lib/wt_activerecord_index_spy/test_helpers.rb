@@ -2,11 +2,15 @@ module WtActiverecordIndexSpy
   module TestHelpers
     extend RSpec::Matchers::DSL
 
-    matcher :have_used_index do |expected|
+    matcher :have_used_db_indexes do |only_certains: false|
       match do |actual|
         WtActiverecordIndexSpy.watch_queries(ignore_queries_originated_in_test_code: false)
         actual.call
-        WtActiverecordIndexSpy.results.empty?
+        if only_certains
+          WtActiverecordIndexSpy.results.certains.empty?
+        else
+          WtActiverecordIndexSpy.results.empty?
+        end
       end
 
       failure_message do |_actual|
@@ -14,7 +18,9 @@ module WtActiverecordIndexSpy
           WtActiverecordIndexSpy.results.to_h.to_s
       end
 
-      supports_block_expectations
+      def supports_block_expectations?
+        true
+      end
     end
   end
 end

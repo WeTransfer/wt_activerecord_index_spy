@@ -5,6 +5,9 @@ if they use a proper index.
 
 It subscribes to `sql.active_record` notification using `ActiveSupport::Notifications`.
 
+It was designed to be used in tests, but it's also possible to use it in
+staging or production, carefully.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -23,6 +26,36 @@ Or install it yourself as:
 
 ## Usage
 
+There are 2 different modes to use it:
+
+### 1 - Using a test matcher
+
+Include the helper in your RSpec configuration:
+
+```ruby
+RSpec.configure do |config|
+  config.include(WtActiverecordIndexSpy::TestHelpers)
+end
+```
+
+Use the helper `have_used_db_indexes` where you want to check if all queries used database indexes:
+
+```ruby
+it 'uses an index for all the queries' do
+  expect { SomeClass.some_method }.to have_used_db_indexes
+end
+```
+
+Given that some results are uncertain, it's also possible to set the matcher to fail only with certain results:
+
+```ruby
+it 'uses an index for all the queries' do
+  expect { SomeClass.some_method }.to have_used_db_indexes(only_certains: true)
+end
+```
+
+### 2 - Watching all queries from a start point
+
 Add this line to enable it:
 
 ```ruby
@@ -31,14 +64,6 @@ WtActiverecordIndexSpy.watch_queries
 
 After that, `wt_activerecord_index_spy` will run an `EXPLAIN` query for every query
 fired with `ActiveRecord` that has a `WHERE` condition.
-
-It's also possible to enable it in a specific context, using a block:
-
-```ruby
-WtActiverecordIndexSpy.watch_queries do
-  # some code...
-end
-```
 
 After that, you can generate a report with the results:
 
@@ -56,7 +81,31 @@ Which creates a table similar to this:
 Where:
 - **Level**: `certain` when an index is certain to be missing, or `uncertain` when it's not possible to be sure
 - **Identifier**: is the query identifier reported `ActiveRecord` notification
-- **Origin**: is the line the query was fired. By default it ignores queries fired in test code. It's possible to change it setting `WtActiverecordIndexSpy.ignore_queries_originated_in_test_code = false`
+- **Origin**: is the line the query was fired
+
+This mode, by default, **ignores** queries that were originated in test code. For that, it looks for files which name includes `_test` or `_spec`.
+
+It's possible to disable it as follows:
+
+```ruby
+WtActiverecordIndexSpy.watch_queries(ignore_queries_originated_in_test_code: false)
+```
+
+### 3 - Watching all queries given a block
+
+It's also possible to enable it in a specific context, using a block:
+
+```ruby
+WtActiverecordIndexSpy.watch_queries do
+  # some code...
+end
+```
+
+After that, you can generate the HTML report with:
+
+```ruby
+WtActiverecordIndexSpy.export_html_results
+```
 
 ## Supported versions
 
@@ -67,6 +116,8 @@ Currently, it supports only specific versions of Ruby, ActiveRecord and MySql:
 **Mysql**: 5.7
 
 **ActiveRecord**: 6.1
+
+**RSpec**: 3.x
 
 ## Development
 
