@@ -18,7 +18,7 @@ module WtActiverecordIndexSpy
       def to_h
         {
           certains: certains.map(&:to_h),
-          uncertains: uncertains.map(&:to_h),
+          uncertains: uncertains.map(&:to_h)
         }
       end
     end

@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module WtActiverecordIndexSpy
+  # This module defines the helper have_used_db_indexes to use in RSpec tests
   module TestHelpers
     extend RSpec::Matchers::DSL
 
@@ -14,8 +17,7 @@ module WtActiverecordIndexSpy
       end
 
       failure_message do |_actual|
-        "Some queries have not used indexes: " +
-          WtActiverecordIndexSpy.results.to_h.to_s
+        "Some queries have not used indexes: #{WtActiverecordIndexSpy.results.to_h}"
       end
 
       def supports_block_expectations?
