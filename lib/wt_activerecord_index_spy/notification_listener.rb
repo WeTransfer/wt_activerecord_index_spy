@@ -28,7 +28,7 @@ module WtActiverecordIndexSpy
     def initialize(aggregator: Aggregator.new)
       @queries_missing_index = []
       @aggregator = aggregator
-      @analysed_queries = Set.new
+      @query_index_analyser = QueryIndexAnalyser.new
     end
 
     # TODO: refactor me pls to remove all these Rubocop warnings!
@@ -61,29 +61,12 @@ module WtActiverecordIndexSpy
 
       logger.debug "origin accepted: #{origin}"
 
-      # TODO: this could be more intelligent to not duplicate similar queries
-      # with different WHERE values, example:
-      # - WHERE lala = 1 AND popo = 1
-      # - WHERE lala = 2 AND popo = 2
-      return if @analysed_queries.include?(query)
-
-      Thread.new do
-        # more details about the result https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
-        results = ActiveRecord::Base.connection_pool.with_connection do |conn|
-          conn.query("explain #{query}")
-        end
-        @analysed_queries << query
-
-        results.each do |result|
-          criticality_level = analyse_explain(result)
-          next unless criticality_level
-
-          @aggregator.send(
-            "add_#{criticality_level}",
-            Aggregator::Item.new(identifier: identifier, query: query, origin: reduce_origin(origin))
-          )
-        end
-      end.join
+      if criticality_level = @query_index_analyser.analyse(query)
+        @aggregator.send(
+          "add_#{criticality_level}",
+          Aggregator::Item.new(identifier: identifier, query: query, origin: reduce_origin(origin))
+        )
+      end
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/CyclomaticComplexity
@@ -91,33 +74,6 @@ module WtActiverecordIndexSpy
     # rubocop:enable Metrics/PerceivedComplexity
 
     private
-
-    ALLOWED_EXTRA_VALUES = [
-      # https://bugs.mysql.com/bug.php?id=64197
-      "Impossible WHERE noticed after reading const tables",
-      "no matching row"
-    ].freeze
-
-    def reduce_origin(origin)
-      origin[0...origin.rindex(":")]
-        .split("/")[-2..-1]
-        .join("/")
-    end
-
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
-    def analyse_explain(result)
-      _id, _select_type, _table, _partitions, type, possible_keys, key, _key_len,
-        _ref, _rows, _filtered, extra = result
-
-      return if type == "ref"
-      return if ALLOWED_EXTRA_VALUES.any? { |value| extra&.include?(value) }
-
-      return :critical if possible_keys.nil?
-      return :warning if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
-    end
-    # rubocop:enable Metrics/CyclomaticComplexity
-    # rubocop:enable Metrics/PerceivedComplexity
 
     def ignore_query?(name:, query:)
       # FIXME: this seems bad. we should probably have a better way to indicate
@@ -127,6 +83,12 @@ module WtActiverecordIndexSpy
         !name ||
         !query.downcase.include?("where") ||
         IGNORED_SQL.any? { |r| query =~ r }
+    end
+
+    def reduce_origin(origin)
+      origin[0...origin.rindex(":")]
+        .split("/")[-2..-1]
+        .join("/")
     end
 
     def logger
