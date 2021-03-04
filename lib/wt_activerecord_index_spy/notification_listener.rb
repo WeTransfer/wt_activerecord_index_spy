@@ -25,10 +25,11 @@ module WtActiverecordIndexSpy
 
     attr_reader :queries_missing_index
 
-    def initialize(aggregator: Aggregator.new)
+    def initialize(ignore_queries_originated_in_test_code:, aggregator: Aggregator.new)
       @queries_missing_index = []
       @aggregator = aggregator
       @query_index_analyser = QueryIndexAnalyser.new
+      @ignore_queries_originated_in_test_code = ignore_queries_originated_in_test_code
     end
 
     # TODO: refactor me pls to remove all these Rubocop warnings!
@@ -46,10 +47,7 @@ module WtActiverecordIndexSpy
       logger.debug "query type accepted"
 
       origin = caller.find { |line| !line.include?("/gems/") }
-
-      if WtActiverecordIndexSpy.ignore_queries_originated_in_test_code &&
-         (origin.include?("_spec") || origin.include?("_test"))
-
+      if @ignore_queries_originated_in_test_code && (origin.include?("_spec") || origin.include?("_test"))
         logger.debug "origin ignored: #{origin}"
         # Hopefully, it will get the line which executed the query.
         # It ignores activerecord, activesupport and other gem frames.

@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   # Uncomment to register a new dependency of your gem
   spec.add_dependency "activerecord", "~> 6.0"
   spec.add_dependency "activesupport", "~> 6.0"
+  spec.add_dependency "rspec", "~> 3.0"
 
   spec.add_development_dependency "dotenv"
   spec.add_development_dependency "mysql2"

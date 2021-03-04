@@ -8,9 +8,14 @@ RSpec.describe WtActiverecordIndexSpy do
   end
 
   describe ".watch_queries" do
+    let(:ignore_queries_originated_in_test_code) { false }
+
     around(:each) do |example|
       @aggregator = WtActiverecordIndexSpy::Aggregator.new
-      described_class.watch_queries(aggregator: @aggregator) do
+      described_class.watch_queries(
+        aggregator: @aggregator,
+        ignore_queries_originated_in_test_code: ignore_queries_originated_in_test_code
+      ) do
         example.run
       end
     end
@@ -99,11 +104,7 @@ RSpec.describe WtActiverecordIndexSpy do
     end
 
     context "when ignore_queries_originated_in_test_code=true" do
-      around do |example|
-        described_class.ignore_queries_originated_in_test_code = true
-        example.run
-        described_class.ignore_queries_originated_in_test_code = false
-      end
+      let(:ignore_queries_originated_in_test_code) { true }
 
       it "ignores queries originated in test code" do
         User.create(name: "lala")
@@ -143,7 +144,7 @@ RSpec.describe WtActiverecordIndexSpy do
 
   describe ".export_html_results" do
     it "adds a line with the correct origin in the HTML report" do
-      described_class.watch_queries do
+      described_class.watch_queries(ignore_queries_originated_in_test_code: false) do
         User.find_by(name: "lala")
       end
 
