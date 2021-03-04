@@ -2,6 +2,7 @@
 
 require_relative "lib/wt_activerecord_index_spy/version"
 
+# rubocop:disable Metrics/BlockLength
 Gem::Specification.new do |spec|
   spec.name          = "wt_activerecord_index_spy"
   spec.version       = WtActiverecordIndexSpy::VERSION
@@ -34,7 +35,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rspec", "~> 3.0"
 
   spec.add_development_dependency "dotenv"
+  spec.add_development_dependency "gemfury"
   spec.add_development_dependency "mysql2"
   spec.add_development_dependency "pry-byebug"
-  spec.add_development_dependency "gemfury"
 end
+# rubocop:enable Metrics/BlockLength
