@@ -32,7 +32,7 @@ RSpec.describe "test_helpers" do
       end
     end
 
-    it 'unsubscribes event after using the matcher' do
+    it "unsubscribes event after using the matcher" do
       expect(ActiveSupport::Notifications)
         .to receive(:subscribe)
         .with(
@@ -53,12 +53,12 @@ RSpec.describe "test_helpers" do
       expect(WtActiverecordIndexSpy.results).to be_empty
     end
 
-    it 'does not analyse the same query again' do
+    it "does not analyse the same query again" do
       expect { User.find_by(name: "lala") }.not_to have_used_db_indexes
 
       count_explains = 0
       callback = lambda do |_, _, _, _, payload|
-         count_explains +=1 if payload[:sql].include?("explain")
+        count_explains += 1 if payload[:sql].include?("explain")
       end
 
       ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do

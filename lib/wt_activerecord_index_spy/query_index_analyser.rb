@@ -16,7 +16,7 @@ module WtActiverecordIndexSpy
       # with different WHERE values, example:
       # - WHERE lala = 1 AND popo = 1
       # - WHERE lala = 2 AND popo = 2
-      return @analysed_queries[query] if @analysed_queries.has_key?(query)
+      return @analysed_queries[query] if @analysed_queries.key?(query)
 
       # We need a thread to use a different connection that it's used by the
       # application otherwise, it can change some ActiveRecord internal state

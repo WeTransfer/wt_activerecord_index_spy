@@ -26,9 +26,8 @@ module WtActiverecordIndexSpy
     attr_reader :queries_missing_index
 
     def initialize(ignore_queries_originated_in_test_code:,
-      aggregator: Aggregator.new,
-      query_index_analyser: QueryIndexAnalyser.new
-      )
+                   aggregator: Aggregator.new,
+                   query_index_analyser: QueryIndexAnalyser.new)
       @queries_missing_index = []
       @aggregator = aggregator
       @query_index_analyser = query_index_analyser

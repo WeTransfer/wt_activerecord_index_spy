@@ -21,11 +21,12 @@ module WtActiverecordIndexSpy
     @query_analyser ||= QueryIndexAnalyser.new
   end
 
+  # rubocop:disable Metrics/MethodLength
   def watch_queries(
     aggregator: self.aggregator,
     ignore_queries_originated_in_test_code: true,
-    query_index_analyser: self.query_analyser
-    )
+    query_index_analyser: query_analyser
+  )
     aggregator.reset
 
     notification_listener = NotificationListener.new(
@@ -43,6 +44,7 @@ module WtActiverecordIndexSpy
 
     ActiveSupport::Notifications.unsubscribe(subscriber)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def export_html_results(file = nil, stdout: $stdout)
     aggregator.export_html_results(file, stdout: stdout)

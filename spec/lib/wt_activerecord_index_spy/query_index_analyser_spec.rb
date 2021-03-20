@@ -11,7 +11,7 @@ RSpec.describe WtActiverecordIndexSpy::QueryIndexAnalyser do
 
         count_explains = 0
         callback = lambda do |_, _, _, _, payload|
-           count_explains += 1 if payload[:sql].include?("explain")
+          count_explains += 1 if payload[:sql].include?("explain")
         end
 
         ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
