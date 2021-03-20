@@ -32,16 +32,21 @@ module WtActiverecordIndexSpy
       @results = Result.new(certains: Set.new, uncertains: Set.new)
     end
 
-    def add_certain(item)
+    # item: an instance of Aggregator::Item
+    # certainity_level: :certain or :uncertain
+    def add(item, certainity_level)
       # TODO: this could be more intelligent to not duplicate similar queries
       # with different WHERE values, example:
       # - WHERE lala = 1 AND popo = 1
       # - WHERE lala = 2 AND popo = 2
-      @results.certains.add(item)
-    end
-
-    def add_uncertain(item)
-      @results.uncertains.add(item)
+      case certainity_level
+        when :certain
+          @results.certains.add(item)
+        when :uncertain
+          @results.uncertains.add(item)
+        else
+          raise "unkown certainity_level"
+      end
     end
 
     def export_html_results(file, stdout: $stdout)

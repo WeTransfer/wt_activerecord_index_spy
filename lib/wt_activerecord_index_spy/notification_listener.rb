@@ -25,10 +25,13 @@ module WtActiverecordIndexSpy
 
     attr_reader :queries_missing_index
 
-    def initialize(ignore_queries_originated_in_test_code:, aggregator: Aggregator.new)
+    def initialize(ignore_queries_originated_in_test_code:,
+      aggregator: Aggregator.new,
+      query_index_analyser: QueryIndexAnalyser.new
+      )
       @queries_missing_index = []
       @aggregator = aggregator
-      @query_index_analyser = QueryIndexAnalyser.new
+      @query_index_analyser = query_index_analyser
       @ignore_queries_originated_in_test_code = ignore_queries_originated_in_test_code
     end
 
@@ -60,10 +63,13 @@ module WtActiverecordIndexSpy
       certainity_level = @query_index_analyser.analyse(query)
       return unless certainity_level
 
-      @aggregator.send(
-        "add_#{certainity_level}",
-        Aggregator::Item.new(identifier: identifier, query: query, origin: reduce_origin(origin))
+      item = Aggregator::Item.new(
+        identifier: identifier,
+        query: query,
+        origin: reduce_origin(origin)
       )
+
+      @aggregator.add(item, certainity_level)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
