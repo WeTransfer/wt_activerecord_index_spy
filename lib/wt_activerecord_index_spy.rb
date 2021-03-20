@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "wt_activerecord_index_spy/version"
+require_relative "wt_activerecord_index_spy/normalize_query"
 require_relative "wt_activerecord_index_spy/aggregator"
 require_relative "wt_activerecord_index_spy/query_index_analyser"
 require_relative "wt_activerecord_index_spy/notification_listener"
