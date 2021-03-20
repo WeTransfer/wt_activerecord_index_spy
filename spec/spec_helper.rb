@@ -9,6 +9,8 @@ require "active_record"
 
 # ActiveRecord::Base.logger = Logger.new(STDOUT)
 # ActiveRecord::Base.logger.level = 0
+# WtActiverecordIndexSpy.logger = Logger.new(STDOUT)
+# WtActiverecordIndexSpy.logger.level = 0
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

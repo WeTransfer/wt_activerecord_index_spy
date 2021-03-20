@@ -14,8 +14,8 @@ module WtActiverecordIndexSpy
 
         (1..10).each do |index|
           query = "SELECT * FROM lala WHERE id = #{index}"
-          aggregator.add_certain(build_item(identifier: "any", query: query))
-          aggregator.add_certain(build_item(identifier: "any", query: query))
+          aggregator.add(build_item(identifier: "any", query: query), :certain)
+          aggregator.add(build_item(identifier: "any", query: query), :certain)
         end
 
         expect(aggregator.results.certains.count).to eq(10)
@@ -25,10 +25,10 @@ module WtActiverecordIndexSpy
     describe "#export_html_results" do
       it "returns an html with results" do
         aggregator = described_class.new
-        aggregator.add_certain(build_item(identifier: "aa", query: "SELECT 1", origin: "lala.rb"))
-        aggregator.add_certain(build_item(identifier: "aa", query: "SELECT 2", origin: "lala.rb"))
-        aggregator.add_certain(build_item(identifier: "bb", query: "SELECT 1", origin: "popo.rb"))
-        aggregator.add_uncertain(build_item(identifier: "aa", query: "SELECT 1", origin: "popo.rb"))
+        aggregator.add(build_item(identifier: "aa", query: "SELECT 1", origin: "lala.rb"), :certain)
+        aggregator.add(build_item(identifier: "aa", query: "SELECT 2", origin: "lala.rb"), :certain)
+        aggregator.add(build_item(identifier: "bb", query: "SELECT 1", origin: "popo.rb"), :certain)
+        aggregator.add(build_item(identifier: "aa", query: "SELECT 1", origin: "popo.rb"), :uncertain)
 
         file = Tempfile.new
         stdout_spy = spy

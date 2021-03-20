@@ -5,7 +5,9 @@ module WtActiverecordIndexSpy
   # some index is missing.
   class QueryIndexAnalyser
     def initialize
-      @analysed_queries = []
+      # This is a cache to not run the same EXPLAIN again
+      # It sets the query as key and the result (certain, uncertain) as the value
+      @analysed_queries = {}
     end
 
     # rubocop:disable Metrics/MethodLength
@@ -14,9 +16,7 @@ module WtActiverecordIndexSpy
       # with different WHERE values, example:
       # - WHERE lala = 1 AND popo = 1
       # - WHERE lala = 2 AND popo = 2
-      return if @analysed_queries.include?(query)
-
-      @analysed_queries << query
+      return @analysed_queries[query] if @analysed_queries.has_key?(query)
 
       # We need a thread to use a different connection that it's used by the
       # application otherwise, it can change some ActiveRecord internal state
@@ -27,9 +27,21 @@ module WtActiverecordIndexSpy
           conn.query("explain #{query}")
         end
 
+        # The find is used to stop the loop when it's found the first query
+        # which does not use indexes
         results.find do |result|
           certainity_level = analyse_explain(result)
-          break certainity_level if certainity_level
+
+          if certainity_level
+            # The result is cached to not run the EXPLAIN query again in the
+            # future
+            @analysed_queries[query] = certainity_level
+            # Some queries are composed of subqueries, but for now we will
+            # stop when one of them does not use index
+            break certainity_level
+          else
+            @analysed_queries[query] = nil
+          end
         end
       end.join.value
     end

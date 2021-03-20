@@ -31,5 +31,41 @@ RSpec.describe "test_helpers" do
           .to have_used_db_indexes(only_certains: true)
       end
     end
+
+    it 'unsubscribes event after using the matcher' do
+      expect(ActiveSupport::Notifications)
+        .to receive(:subscribe)
+        .with(
+          "sql.active_record",
+          an_instance_of(WtActiverecordIndexSpy::NotificationListener)
+        ).and_call_original
+
+      expect(ActiveSupport::Notifications)
+        .to receive(:unsubscribe)
+        .and_call_original
+
+      expect { User.find_by(name: "lala") }.not_to have_used_db_indexes
+
+      WtActiverecordIndexSpy.reset_results
+
+      User.find_by(name: "lala")
+
+      expect(WtActiverecordIndexSpy.results).to be_empty
+    end
+
+    it 'does not analyse the same query again' do
+      expect { User.find_by(name: "lala") }.not_to have_used_db_indexes
+
+      count_explains = 0
+      callback = lambda do |_, _, _, _, payload|
+         count_explains +=1 if payload[:sql].include?("explain")
+      end
+
+      ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        expect { User.find_by(name: "lala") }.not_to have_used_db_indexes
+      end
+
+      expect(count_explains).to eq(0)
+    end
   end
 end

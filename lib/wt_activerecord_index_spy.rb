@@ -17,12 +17,21 @@ module WtActiverecordIndexSpy
     @aggregator ||= Aggregator.new
   end
 
-  def watch_queries(aggregator: self.aggregator, ignore_queries_originated_in_test_code: true)
+  def query_analyser
+    @query_analyser ||= QueryIndexAnalyser.new
+  end
+
+  def watch_queries(
+    aggregator: self.aggregator,
+    ignore_queries_originated_in_test_code: true,
+    query_index_analyser: self.query_analyser
+    )
     aggregator.reset
 
     notification_listener = NotificationListener.new(
       aggregator: aggregator,
-      ignore_queries_originated_in_test_code: ignore_queries_originated_in_test_code
+      ignore_queries_originated_in_test_code: ignore_queries_originated_in_test_code,
+      query_index_analyser: query_index_analyser
     )
 
     subscriber = ActiveSupport::Notifications
@@ -41,6 +50,10 @@ module WtActiverecordIndexSpy
 
   def results
     aggregator.results
+  end
+
+  def reset_results
+    aggregator.reset
   end
 
   def boot
