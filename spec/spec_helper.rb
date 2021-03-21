@@ -24,37 +24,24 @@ RSpec.configure do |config|
   end
 
   config.before :all do
-    db_config = {
-      adapter: "mysql2",
-      host: ENV.fetch("DB_HOST", "localhost"),
-      username: ENV.fetch("DB_USER", "root"),
-      password: ENV.fetch("DB_PASSWORD", "root"),
-      database: "wt_activerecord_index_spy_test"
+    db_configs = {
+      mysql: {
+        adapter: "mysql2",
+        host: ENV.fetch("MYSQL_DB_HOST", "localhost"),
+        username: ENV.fetch("MYSQL_DB_USER", "root"),
+        password: ENV.fetch("MYSQL_DB_PASSWORD", "root"),
+        database: "wt_activerecord_index_spy_test"
+      }
     }
+
     # TODO: the must be a better way to create and connect to the database
-    ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
-    ActiveRecord::Base.connection.create_database(db_config[:database])
-    ActiveRecord::Base.establish_connection(db_config)
+    db_configs.each do |adapter, db_config|
+      ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
+      ActiveRecord::Base.connection.create_database(db_config[:database])
+      ActiveRecord::Base.establish_connection(db_config)
 
-    create_table_migration = Class.new(ActiveRecord::Migration[6.0]) do
-      def change
-        create_table :users do |t|
-          t.string :name
-          t.string :email
-          t.integer :age
-          t.integer :city_id
-        end
-
-        add_index :users, :email
-        add_index :users, :city_id
-
-        create_table :cities do |t|
-          t.string :name
-        end
-      end
+      run_migrations
     end
-
-    create_table_migration.new.change
   end
 
   config.around :each do |example|
@@ -71,6 +58,28 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.max_formatted_output_length = 10_000
   end
+end
+
+def run_migrations
+  create_table_migration = Class.new(ActiveRecord::Migration[6.0]) do
+    def change
+      create_table :users do |t|
+        t.string :name
+        t.string :email
+        t.integer :age
+        t.integer :city_id
+      end
+
+      add_index :users, :email
+      add_index :users, :city_id
+
+      create_table :cities do |t|
+        t.string :name
+      end
+    end
+  end
+
+  create_table_migration.new.change
 end
 
 class User < ActiveRecord::Base

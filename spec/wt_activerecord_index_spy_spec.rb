@@ -163,14 +163,15 @@ RSpec.describe WtActiverecordIndexSpy do
   describe ".query_analyser" do
     context "when the database is Mysql" do
       it 'returns an instance of mysql query analyser' do
-        expect(described_class.query_analyser)
-          .to be_a(WtActiverecordIndexSpy::QueryAnalyser::Mysql)
+        expect(described_class.query_analyser.adapter)
+          .to eq(WtActiverecordIndexSpy::QueryAnalyser::Mysql)
       end
     end
 
     context "when the database is Posgresql" do
       it 'returns an instance of postgres query analyser' do
-        pending 'TODO'
+        expect(described_class.query_analyser.adapter)
+          .to eq(WtActiverecordIndexSpy::QueryAnalyser::Postgres)
       end
     end
   end

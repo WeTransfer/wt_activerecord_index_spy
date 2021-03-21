@@ -2,7 +2,9 @@
 
 require_relative "wt_activerecord_index_spy/version"
 require_relative "wt_activerecord_index_spy/aggregator"
+require_relative "wt_activerecord_index_spy/query_analyser"
 require_relative "wt_activerecord_index_spy/query_analyser/mysql"
+require_relative "wt_activerecord_index_spy/query_analyser/postgres"
 require_relative "wt_activerecord_index_spy/notification_listener"
 require_relative "wt_activerecord_index_spy/test_helpers"
 require "logger"
@@ -18,7 +20,16 @@ module WtActiverecordIndexSpy
   end
 
   def query_analyser
-    @query_analyser ||= QueryAnalyser::Mysql.new
+    adapter = case ActiveRecord::Base.connection.adapter_name
+    when 'Mysql2'
+      QueryAnalyser::Mysql
+    when 'postgresql'
+      QueryAnalyser::Postgres
+    else
+      raise NotImplemented
+    end
+
+    @query_analyser ||= QueryAnalyser.new(adapter)
   end
 
   # rubocop:disable Metrics/MethodLength
