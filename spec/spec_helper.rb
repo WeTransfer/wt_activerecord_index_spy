@@ -29,13 +29,21 @@ RSpec.configure do |config|
         adapter: "mysql2",
         host: ENV.fetch("MYSQL_DB_HOST", "localhost"),
         username: ENV.fetch("MYSQL_DB_USER", "root"),
-        password: ENV.fetch("MYSQL_DB_PASSWORD", "root"),
+        password: ENV.fetch("MYSQL_DB_PASSWORD", ""),
+        database: "wt_activerecord_index_spy_test"
+      },
+      postgresql: {
+        adapter: "postgresql",
+        host: ENV.fetch("POSTGRES_DB_HOST", "localhost"),
+        username: ENV.fetch("POSTGRES_DB_USER", "postgres"),
+        password: ENV.fetch("POSTGRES_DB_PASSWORD", ""),
         database: "wt_activerecord_index_spy_test"
       }
     }
 
     # TODO: the must be a better way to create and connect to the database
     db_configs.each do |adapter, db_config|
+      puts "Creating database #{adapter}"
       ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
       ActiveRecord::Base.connection.create_database(db_config[:database])
       ActiveRecord::Base.establish_connection(db_config)

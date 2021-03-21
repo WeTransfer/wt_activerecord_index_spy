@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "dotenv"
   spec.add_development_dependency "gemfury"
   spec.add_development_dependency "mysql2"
+  spec.add_development_dependency "pg"
   spec.add_development_dependency "pry-byebug"
 end
 # rubocop:enable Metrics/BlockLength
