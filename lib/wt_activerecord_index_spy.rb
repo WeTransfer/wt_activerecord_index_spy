@@ -2,7 +2,7 @@
 
 require_relative "wt_activerecord_index_spy/version"
 require_relative "wt_activerecord_index_spy/aggregator"
-require_relative "wt_activerecord_index_spy/query_index_analyser"
+require_relative "wt_activerecord_index_spy/query_analyser/mysql"
 require_relative "wt_activerecord_index_spy/notification_listener"
 require_relative "wt_activerecord_index_spy/test_helpers"
 require "logger"
@@ -18,7 +18,7 @@ module WtActiverecordIndexSpy
   end
 
   def query_analyser
-    @query_analyser ||= QueryIndexAnalyser.new
+    @query_analyser ||= QueryAnalyser::Mysql.new
   end
 
   # rubocop:disable Metrics/MethodLength

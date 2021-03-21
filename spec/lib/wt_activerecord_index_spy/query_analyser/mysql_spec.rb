@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe WtActiverecordIndexSpy::QueryIndexAnalyser do
+RSpec.describe WtActiverecordIndexSpy::QueryAnalyser::Mysql do
   describe "#analyse" do
     context "when the same query runs more than once" do
       it "analyses only the first one" do
