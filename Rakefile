@@ -24,3 +24,46 @@ task "release:rubygem_push" do
   escaped_gem_path = Shellwords.escape(paths.shift)
   `fury push #{escaped_gem_path} --as=wetransfer`
 end
+
+namespace :db do
+  require_relative './spec/support/test_database'
+  require 'active_record'
+  require "dotenv/load"
+  Dotenv.load
+
+  desc "Create databases to be used in tests"
+  task "create" do
+    db_configs = TestDatabase.configs
+
+    # TODO: the must be a better way to create and connect to the database
+    db_configs.each do |adapter, db_config|
+      puts "Creating database #{adapter}"
+      ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
+      ActiveRecord::Base.connection.create_database(db_config[:database])
+    end
+  end
+
+  desc "Drop databases to be used in tests"
+  task "drop" do
+    db_configs = TestDatabase.configs
+
+    # TODO: the must be a better way to create and connect to the database
+    db_configs.each do |adapter, db_config|
+      puts "Dropping database #{adapter}"
+      ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
+      ActiveRecord::Base.connection.drop_database(db_config[:database])
+    end
+  end
+
+  desc "Migrate databases to be used in tests"
+  task "migrate" do
+    db_configs = TestDatabase.configs
+
+    # TODO: the must be a better way to create and connect to the database
+    db_configs.each do |adapter, db_config|
+      puts "Migrating database #{adapter}"
+      ActiveRecord::Base.establish_connection(db_config)
+      TestDatabase.run_migrations
+    end
+  end
+end

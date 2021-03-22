@@ -6,6 +6,7 @@ Dotenv.load
 
 require "wt_activerecord_index_spy"
 require "active_record"
+require_relative "./support/test_database"
 
 # ActiveRecord::Base.logger = Logger.new(STDOUT)
 # ActiveRecord::Base.logger.level = 0
@@ -24,32 +25,7 @@ RSpec.configure do |config|
   end
 
   config.before :all do
-    db_configs = {
-      mysql: {
-        adapter: "mysql2",
-        host: ENV.fetch("MYSQL_DB_HOST", "localhost"),
-        username: ENV.fetch("MYSQL_DB_USER", "root"),
-        password: ENV.fetch("MYSQL_DB_PASSWORD", ""),
-        database: "wt_activerecord_index_spy_test"
-      },
-      postgresql: {
-        adapter: "postgresql",
-        host: ENV.fetch("POSTGRES_DB_HOST", "localhost"),
-        username: ENV.fetch("POSTGRES_DB_USER", "postgres"),
-        password: ENV.fetch("POSTGRES_DB_PASSWORD", ""),
-        database: "wt_activerecord_index_spy_test"
-      }
-    }
-
-    # TODO: the must be a better way to create and connect to the database
-    db_configs.each do |adapter, db_config|
-      puts "Creating database #{adapter}"
-      ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
-      ActiveRecord::Base.connection.create_database(db_config[:database])
-      ActiveRecord::Base.establish_connection(db_config)
-
-      run_migrations
-    end
+    ActiveRecord::Base.establish_connection(TestDatabase.configs[:mysql])
   end
 
   config.around :each do |example|
@@ -59,35 +35,9 @@ RSpec.configure do |config|
     end
   end
 
-  config.after :all do
-    ActiveRecord::Base.connection.drop_database("wt_activerecord_index_spy_test")
-  end
-
   config.expect_with :rspec do |c|
     c.max_formatted_output_length = 10_000
   end
-end
-
-def run_migrations
-  create_table_migration = Class.new(ActiveRecord::Migration[6.0]) do
-    def change
-      create_table :users do |t|
-        t.string :name
-        t.string :email
-        t.integer :age
-        t.integer :city_id
-      end
-
-      add_index :users, :email
-      add_index :users, :city_id
-
-      create_table :cities do |t|
-        t.string :name
-      end
-    end
-  end
-
-  create_table_migration.new.change
 end
 
 class User < ActiveRecord::Base
@@ -96,5 +46,6 @@ class User < ActiveRecord::Base
   end
 end
 
-class City < ActiveRecord::Base; end
+class City < ActiveRecord::Base;
+end
 # rubocop:enable Metrics/MethodLength
