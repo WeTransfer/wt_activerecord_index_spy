@@ -20,16 +20,7 @@ module WtActiverecordIndexSpy
   end
 
   def query_analyser
-    adapter = case ActiveRecord::Base.connection.adapter_name
-    when 'Mysql2'
-      QueryAnalyser::Mysql
-    when 'postgresql'
-      QueryAnalyser::Postgres
-    else
-      raise NotImplemented
-    end
-
-    @query_analyser ||= QueryAnalyser.new(adapter)
+    @query_analyser ||= QueryAnalyser.new
   end
 
   # rubocop:disable Metrics/MethodLength

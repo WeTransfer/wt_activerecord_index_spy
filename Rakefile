@@ -28,6 +28,7 @@ end
 namespace :db do
   require_relative './spec/support/test_database'
   require 'active_record'
+  require 'active_record/database_configurations'
   require "dotenv/load"
   Dotenv.load
 
@@ -36,10 +37,11 @@ namespace :db do
     db_configs = TestDatabase.configs
 
     # TODO: the must be a better way to create and connect to the database
-    db_configs.each do |adapter, db_config|
-      puts "Creating database #{adapter}"
-      ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
-      ActiveRecord::Base.connection.create_database(db_config[:database])
+    db_configs.each do |db_config|
+      puts "Creating database #{db_config.name}"
+      configurations = db_config.configuration_hash
+      ActiveRecord::Base.establish_connection(configurations.reject { |k, _v| k == :database })
+      ActiveRecord::Base.connection.create_database(configurations[:database])
     end
   end
 
@@ -48,10 +50,11 @@ namespace :db do
     db_configs = TestDatabase.configs
 
     # TODO: the must be a better way to create and connect to the database
-    db_configs.each do |adapter, db_config|
-      puts "Dropping database #{adapter}"
-      ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
-      ActiveRecord::Base.connection.drop_database(db_config[:database])
+    db_configs.each do |db_config|
+      puts "Dropping database #{db_config.name}"
+      configurations = db_config.configuration_hash
+      ActiveRecord::Base.establish_connection(configurations.reject { |k, _v| k == :database })
+      ActiveRecord::Base.connection.drop_database(configurations[:database])
     end
   end
 
@@ -60,9 +63,10 @@ namespace :db do
     db_configs = TestDatabase.configs
 
     # TODO: the must be a better way to create and connect to the database
-    db_configs.each do |adapter, db_config|
-      puts "Migrating database #{adapter}"
-      ActiveRecord::Base.establish_connection(db_config)
+    db_configs.each do |db_config|
+      puts "Migrating database #{db_config.name}"
+      configurations = db_config.configuration_hash
+      ActiveRecord::Base.establish_connection(configurations)
       TestDatabase.run_migrations
     end
   end

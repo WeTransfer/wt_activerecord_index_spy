@@ -4,13 +4,10 @@ module WtActiverecordIndexSpy
   # It runs an EXPLAIN query given a query and analyses the result to see if
   # some index is missing.
   class QueryAnalyser
-    attr_reader :adapter
-
-    def initialize(adapter)
+    def initialize
       # This is a cache to not run the same EXPLAIN again
       # It sets the query as key and the result (certain, uncertain) as the value
       @analysed_queries = {}
-      @adapter = adapter
     end
 
     # rubocop:disable Metrics/MethodLength
@@ -20,6 +17,8 @@ module WtActiverecordIndexSpy
       # - WHERE lala = 1 AND popo = 1
       # - WHERE lala = 2 AND popo = 2
       return @analysed_queries[query] if @analysed_queries.key?(query)
+
+      adapter = select_adapter
 
       # We need a thread to use a different connection that it's used by the
       # application otherwise, it can change some ActiveRecord internal state
@@ -33,7 +32,7 @@ module WtActiverecordIndexSpy
         # The find is used to stop the loop when it's found the first query
         # which does not use indexes
         results.find do |result|
-          certainity_level = @adapter.analyse_explain(result)
+          certainity_level = adapter.analyse_explain(result)
 
           if certainity_level
             # The result is cached to not run the EXPLAIN query again in the
@@ -49,5 +48,18 @@ module WtActiverecordIndexSpy
       end.join.value
     end
     # rubocop:enable Metrics/MethodLength
+
+    private
+
+    def select_adapter
+      case ActiveRecord::Base.connection.adapter_name
+      when 'Mysql2'
+        QueryAnalyser::Mysql
+      when 'postgresql'
+        QueryAnalyser::Postgres
+      else
+        raise NotImplemented
+      end
+    end
   end
 end
