@@ -20,6 +20,7 @@ RSpec.describe WtActiverecordIndexSpy do
       end
     end
 
+    # TODO: move these tests to query_analyser
     context "when a query does not use an index" do
       it "adds the query to the certain list" do
         User.find_by(name: "lala")
@@ -157,22 +158,6 @@ RSpec.describe WtActiverecordIndexSpy do
       expect(html).to match(%r{<td>certain</td>\n.+<td>User Load</td>})
       expect(html).to match(%r{<td>.+WHERE `users`.`name` = 'lala'.+</td>})
       expect(html).to match(%r{<td>spec/wt_activerecord_index_spy_spec.rb:\d+</td>})
-    end
-  end
-
-  describe ".query_analyser" do
-    context "when the database is Mysql" do
-      it 'returns an instance of mysql query analyser' do
-        expect(described_class.query_analyser.adapter)
-          .to eq(WtActiverecordIndexSpy::QueryAnalyser::Mysql)
-      end
-    end
-
-    context "when the database is Posgresql" do
-      it 'returns an instance of postgres query analyser' do
-        expect(described_class.query_analyser.adapter)
-          .to eq(WtActiverecordIndexSpy::QueryAnalyser::Postgres)
-      end
     end
   end
 end

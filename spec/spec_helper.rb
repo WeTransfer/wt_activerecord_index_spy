@@ -13,8 +13,10 @@ require_relative "./support/test_database"
 require 'database_cleaner/active_record'
 DatabaseCleaner.strategy = :truncation
 
-# ActiveRecord::Base.logger = Logger.new(STDOUT)
-# ActiveRecord::Base.logger.level = 0
+if ENV['LOG_QUERIES']
+  ActiveRecord::Base.logger = Logger.new(STDOUT)
+  ActiveRecord::Base.logger.level = 0
+end
 # WtActiverecordIndexSpy.logger = Logger.new(STDOUT)
 # WtActiverecordIndexSpy.logger.level = 0
 
