@@ -20,7 +20,10 @@ end
 # WtActiverecordIndexSpy.logger = Logger.new(STDOUT)
 # WtActiverecordIndexSpy.logger.level = 0
 
-ActiveRecord::Base.configurations = TestDatabase.configs
+adapter = ENV.fetch('ADAPTER', 'mysql2')
+
+db_configs = TestDatabase.configs.find{ |confs| confs[:adapter] == adapter }
+ActiveRecord::Base.configurations = { test: db_configs }
 ActiveRecord::Base.establish_connection
 
 require_relative "./support/models"

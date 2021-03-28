@@ -6,7 +6,7 @@ RSpec.describe WtActiverecordIndexSpy::QueryAnalyser do
       it "analyses only the first one" do
         query = User.where(name: "lala").to_sql
 
-        result = subject.analyse(query)
+        result = subject.analyse(sql: query)
         expect(result).to eq(:certain)
 
         count_explains = 0
@@ -15,7 +15,7 @@ RSpec.describe WtActiverecordIndexSpy::QueryAnalyser do
         end
 
         ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
-          result = subject.analyse(query)
+          result = subject.analyse(sql: query)
         end
 
         expect(result).to eq(:certain)
@@ -23,25 +23,12 @@ RSpec.describe WtActiverecordIndexSpy::QueryAnalyser do
       end
     end
 
-    context "mysql" do
-      context "when a query does not use an index" do
-        it "adds the query to the certain list" do
-          query = User.where(name: "lala").to_sql
+    context "when a query does not use an index" do
+      it "adds the query to the certain list" do
+        query = User.where(name: "lala").to_sql
 
-          result = subject.analyse(query)
-          expect(result).to eq(:certain)
-        end
-      end
-    end
-
-    context "postgres" do
-      context "when a query does not use an index" do
-        it "adds the query to the certain list" do
-          query = UserPostgres.where(name: "lala").to_sql
-
-          result = subject.analyse(query)
-          expect(result).to eq(:certain)
-        end
+        result = subject.analyse(sql: query)
+        expect(result).to eq(:certain)
       end
     end
   end

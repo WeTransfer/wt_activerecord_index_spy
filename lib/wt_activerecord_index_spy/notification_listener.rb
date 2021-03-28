@@ -20,7 +20,8 @@ module WtActiverecordIndexSpy
       /^SHOW max_identifier_length/,
       /^SELECT @@FOREIGN_KEY_CHECKS/,
       /^SET FOREIGN_KEY_CHECKS/,
-      /^TRUNCATE TABLE/
+      /^TRUNCATE TABLE/,
+      /^EXPLAIN/,
     ].freeze
 
     attr_reader :queries_missing_index
@@ -46,6 +47,7 @@ module WtActiverecordIndexSpy
         logger.debug "query type ignored"
         return
       end
+      connection = values[:connection]
       logger.debug "query type accepted"
 
       origin = caller.find { |line| !line.include?("/gems/") }
@@ -59,7 +61,7 @@ module WtActiverecordIndexSpy
 
       logger.debug "origin accepted: #{origin}"
 
-      certainity_level = @query_index_analyser.analyse(query)
+      certainity_level = @query_index_analyser.analyse(**values.slice(:sql, :connection, :type_casted_binds))
       return unless certainity_level
 
       item = Aggregator::Item.new(

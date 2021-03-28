@@ -15,8 +15,10 @@ module WtActiverecordIndexSpy
       # rubocop:disable Metrics/CyclomaticComplexity
       # rubocop:disable Metrics/PerceivedComplexity
       def analyse_explain(result)
-        _id, _select_type, _table, _partitions, type, possible_keys, key, _key_len,
-          _ref, _rows, _filtered, extra = result
+        type = result.fetch('type')
+        possible_keys = result.fetch('possible_keys')
+        key = result.fetch('key')
+        extra = result.fetch('Extra')
 
         # more details about the result in https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
         return if type == "ref"

@@ -10,15 +10,25 @@ module WtActiverecordIndexSpy
       @analysed_queries = {}
     end
 
+    # The sql and type_casted_binds vary depend on the adapter.
+    # - Mysql2: sends sql complete and type_casted_binds = []
+    # - Postregs: sends sql in a form of prepared statement and its values in type_casted_binds
+    #
     # rubocop:disable Metrics/MethodLength
-    def analyse(query)
+    def analyse(sql:, connection: ActiveRecord::Base.connection, type_casted_binds: [])
+      query = sql
       # TODO: this could be more intelligent to not duplicate similar queries
       # with different WHERE values, example:
       # - WHERE lala = 1 AND popo = 1
       # - WHERE lala = 2 AND popo = 2
       return @analysed_queries[query] if @analysed_queries.key?(query)
 
-      adapter = select_adapter
+      adapter = select_adapter(connection)
+
+      # query_with_values = query
+      # if type_casted_binds.any?
+      #   query_with_values =
+      # end
 
       # We need a thread to use a different connection that it's used by the
       # application otherwise, it can change some ActiveRecord internal state
@@ -26,7 +36,7 @@ module WtActiverecordIndexSpy
       # `update_all`
       Thread.new do
         results = ActiveRecord::Base.connection_pool.with_connection do |conn|
-          conn.query("explain #{query}")
+          conn.exec_query("EXPLAIN #{query}", 'SQL', type_casted_binds, prepare: true)
         end
 
         # The find is used to stop the loop when it's found the first query
@@ -51,14 +61,14 @@ module WtActiverecordIndexSpy
 
     private
 
-    def select_adapter
-      case ActiveRecord::Base.connection.adapter_name
+    def select_adapter(connection)
+      case connection.adapter_name
       when 'Mysql2'
         QueryAnalyser::Mysql
-      when 'postgresql'
+      when 'PostgreSQL'
         QueryAnalyser::Postgres
       else
-        raise NotImplemented
+        raise NotImplementedError, "adapter: #{ActiveRecord::Base.connection.adapter_name}"
       end
     end
   end

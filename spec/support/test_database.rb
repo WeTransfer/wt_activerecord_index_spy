@@ -3,28 +3,20 @@ module TestDatabase
 
   def configs
     [
-      ActiveRecord::DatabaseConfigurations::HashConfig.new(
-        'test',
-        'mysql',
-        {
-          adapter: "mysql2",
-          host: ENV.fetch("MYSQL_DB_HOST", "localhost"),
-          username: ENV.fetch("MYSQL_DB_USER", "root"),
-          password: ENV.fetch("MYSQL_DB_PASSWORD", ""),
-          database: "wt_activerecord_index_spy_test"
-        }
-      ),
-      ActiveRecord::DatabaseConfigurations::HashConfig.new(
-        'test',
-        'postgres',
-        {
-          adapter: "postgresql",
-          host: ENV.fetch("POSTGRES_DB_HOST", "localhost"),
-          username: ENV.fetch("POSTGRES_DB_USER", "postgres"),
-          password: ENV.fetch("POSTGRES_DB_PASSWORD", ""),
-          database: "wt_activerecord_index_spy_test"
-        }
-      )
+      {
+        adapter: "mysql2",
+        host: ENV.fetch("MYSQL_DB_HOST", "localhost"),
+        username: ENV.fetch("MYSQL_DB_USER", "root"),
+        password: ENV.fetch("MYSQL_DB_PASSWORD", ""),
+        database: "wt_activerecord_index_spy_test",
+      },
+      {
+        adapter: "postgresql",
+        host: ENV.fetch("POSTGRES_DB_HOST", "localhost"),
+        username: ENV.fetch("POSTGRES_DB_USER", "postgres"),
+        password: ENV.fetch("POSTGRES_DB_PASSWORD", ""),
+        database: "wt_activerecord_index_spy_test",
+      }
     ]
   end
 
