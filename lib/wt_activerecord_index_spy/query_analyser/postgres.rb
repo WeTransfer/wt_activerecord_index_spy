@@ -11,6 +11,7 @@ module WtActiverecordIndexSpy
           _ref, _rows, _filtered, extra = result
 
         #TODO: todo
+        return nil
       end
     end
   end

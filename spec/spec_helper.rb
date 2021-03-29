@@ -10,9 +10,6 @@ require "wt_activerecord_index_spy"
 require "active_record"
 require_relative "./support/test_database"
 
-require 'database_cleaner/active_record'
-DatabaseCleaner.strategy = :truncation
-
 if ENV['LOG_QUERIES']
   ActiveRecord::Base.logger = Logger.new(STDOUT)
   ActiveRecord::Base.logger.level = 0
@@ -39,8 +36,11 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
-  config.after :each do
-    DatabaseCleaner.clean
+  config.around :each do |example|
+    ActiveRecord::Base.transaction do
+      example.run
+      raise ActiveRecord::Rollback
+    end
   end
 
   config.expect_with :rspec do |c|
