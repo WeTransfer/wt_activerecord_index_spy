@@ -14,8 +14,11 @@ if ENV['LOG_QUERIES']
   ActiveRecord::Base.logger = Logger.new(STDOUT)
   ActiveRecord::Base.logger.level = 0
 end
-# WtActiverecordIndexSpy.logger = Logger.new(STDOUT)
-# WtActiverecordIndexSpy.logger.level = 0
+
+if ENV['DEBUG']
+  WtActiverecordIndexSpy.logger = Logger.new(STDOUT)
+  WtActiverecordIndexSpy.logger.level = 0
+end
 
 adapter = ENV.fetch('ADAPTER', 'mysql2')
 
@@ -34,6 +37,13 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+
+  # Some tests may run only for a specific adapter, so we need to filter them
+  all_adapters = TestDatabase.configs.map {|db_config| db_config[:adapter]}
+  other_adapters = all_adapters - [adapter]
+  other_adapters.each do |other_adapter|
+    config.filter_run_excluding(only: other_adapter.to_sym)
   end
 
   config.around :each do |example|

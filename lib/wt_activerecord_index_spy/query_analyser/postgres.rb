@@ -6,12 +6,17 @@ module WtActiverecordIndexSpy
     module Postgres
       extend self
 
-      def analyse_explain(result)
-        _id, _select_type, _table, _partitions, type, possible_keys, key, _key_len,
-          _ref, _rows, _filtered, extra = result
+      def analyse(results, query:)
+        WtActiverecordIndexSpy.logger.debug("results:\n" + results.rows.join("\n"))
+
+        full_results = results.rows.join(", ").downcase
+
+        if full_results.include?("filter") && full_results.include?("seq scan on")
+          return { query => :certain }
+        end
 
         #TODO: todo
-        return nil
+        return {}
       end
     end
   end

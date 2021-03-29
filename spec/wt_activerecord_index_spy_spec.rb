@@ -55,8 +55,7 @@ RSpec.describe WtActiverecordIndexSpy do
 
         User.find_by(age: 20, name: "popo")
 
-        expect(@aggregator.results.certains.first.query)
-          .to include("WHERE `users`.`age` = 20")
+        expect(@aggregator.results.certains.count).to eq(1)
       end
     end
 
@@ -85,7 +84,7 @@ RSpec.describe WtActiverecordIndexSpy do
     end
 
     context "when a query has index but a subquery does not" do
-      it "adds the query to the certain list" do
+      it "adds the query to the uncertain list", only: [:mysql2] do
         City.create!(name: "Rio", id: 1)
         City.create!(name: "Santo Andre", id: 2)
         City.create!(name: "Maua", id: 3)
@@ -98,9 +97,29 @@ RSpec.describe WtActiverecordIndexSpy do
         User.where(city_id: cities).to_a
 
         expect(@aggregator.results.certains.count).to eq(0)
+        expect(@aggregator.results.uncertains.count).to eq(1)
         expect(@aggregator.results.uncertains.first.identifier).to eq("User Load")
         expect(@aggregator.results.uncertains.first.query)
           .to include("WHERE `users`.`city_id` IN")
+      end
+
+      it "adds the query to the certain list", only: [:postgresql] do
+        City.create!(name: "Rio", id: 1)
+        City.create!(name: "Santo Andre", id: 2)
+        City.create!(name: "Maua", id: 3)
+
+        User.create!(name: "Lala1", city_id: 1)
+        User.create!(name: "Lala2", city_id: 2)
+        User.create!(name: "Lala3", city_id: 1)
+
+        cities = City.where(name: "Santo Andre")
+        User.where(city_id: cities).to_a
+
+        expect(@aggregator.results.certains.count).to eq(1)
+        expect(@aggregator.results.uncertains.count).to eq(0)
+        expect(@aggregator.results.certains.first.identifier).to eq("User Load")
+        expect(@aggregator.results.certains.first.query)
+          .to include("WHERE \"cities\".\"name\" = $1")
       end
     end
 
@@ -144,7 +163,7 @@ RSpec.describe WtActiverecordIndexSpy do
   end
 
   describe ".export_html_results" do
-    it "adds a line with the correct origin in the HTML report" do
+    it "adds a line with the correct origin in the HTML report", only: [:mysql2, :lala] do
       described_class.watch_queries(ignore_queries_originated_in_test_code: false) do
         User.find_by(name: "lala")
       end
