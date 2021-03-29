@@ -36,12 +36,10 @@ namespace :db do
   task "create" do
     db_configs = TestDatabase.configs
 
-    # TODO: the must be a better way to create and connect to the database
     db_configs.each do |db_config|
-      puts "Creating database #{db_config.name}"
-      configurations = db_config.configuration_hash
-      ActiveRecord::Base.establish_connection(configurations.reject { |k, _v| k == :database })
-      ActiveRecord::Base.connection.create_database(configurations[:database])
+      puts "Creating database #{db_config[:adapter]}"
+      ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
+      ActiveRecord::Base.connection.create_database(db_config[:database])
     end
   end
 
@@ -49,12 +47,10 @@ namespace :db do
   task "drop" do
     db_configs = TestDatabase.configs
 
-    # TODO: the must be a better way to create and connect to the database
     db_configs.each do |db_config|
-      puts "Dropping database #{db_config.name}"
-      configurations = db_config.configuration_hash
-      ActiveRecord::Base.establish_connection(configurations.reject { |k, _v| k == :database })
-      ActiveRecord::Base.connection.drop_database(configurations[:database])
+      puts "Dropping database #{db_config[:adapter]}"
+      ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
+      ActiveRecord::Base.connection.drop_database(db_config[:database])
     end
   end
 
@@ -62,11 +58,9 @@ namespace :db do
   task "migrate" do
     db_configs = TestDatabase.configs
 
-    # TODO: the must be a better way to create and connect to the database
     db_configs.each do |db_config|
-      puts "Migrating database #{db_config.name}"
-      configurations = db_config.configuration_hash
-      ActiveRecord::Base.establish_connection(configurations)
+      puts "Migrating database #{db_config[:adapter]}"
+      ActiveRecord::Base.establish_connection(db_config)
       TestDatabase.run_migrations
     end
   end
