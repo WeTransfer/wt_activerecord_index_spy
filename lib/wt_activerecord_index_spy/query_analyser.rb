@@ -21,6 +21,11 @@ module WtActiverecordIndexSpy
       # with different WHERE values, example:
       # - WHERE lala = 1 AND popo = 1
       # - WHERE lala = 2 AND popo = 2
+      # Notes:
+      # - The Postgres adapter uses prepared statements as default, so it
+      # will save the queries without the values.
+      # - The Mysql2 adapter does not use prepared statements as default, so it
+      # will analyse very similar queries as described above.
       return @analysed_queries[query] if @analysed_queries.key?(query)
 
       adapter = select_adapter(connection)
@@ -41,20 +46,11 @@ module WtActiverecordIndexSpy
 
         # The find is used to stop the loop when it's found the first query
         # which does not use indexes
-        results.find do |result|
-          certainity_level = adapter.analyse_explain(result)
+        result_explain_analisis = adapter.analyse(results, query: query)
+        @analysed_queries.merge(result_explain_analisis)
 
-          if certainity_level
-            # The result is cached to not run the EXPLAIN query again in the
-            # future
-            @analysed_queries[query] = certainity_level
-            # Some queries are composed of subqueries, but for now we will
-            # stop when one of them does not use index
-            break certainity_level
-          else
-            @analysed_queries[query] = nil
-          end
-        end
+        non_nil = result_explain_analisis.find { |k,v| v != nil }
+        non_nil && non_nil[1]
       end.join.value
     end
     # rubocop:enable Metrics/MethodLength
