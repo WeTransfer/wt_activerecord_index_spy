@@ -23,10 +23,10 @@ RSpec.describe WtActiverecordIndexSpy do
     # TODO: move these tests to query_analyser
     context "when a query does not use an index" do
       it "adds the query to the certain list" do
-        User.find_by(name: "lala")
+        User.where(name: "lala").to_a
 
-        expect(@aggregator.results.certains.first.query)
-          .to include("WHERE `users`.`name` = 'lala'")
+        expect(@aggregator.results.certains.count).to eq(1)
+        expect(@aggregator.results.uncertains.count).to eq(0)
       end
     end
 
