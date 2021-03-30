@@ -31,5 +31,23 @@ RSpec.describe WtActiverecordIndexSpy::QueryAnalyser do
         expect(result).to eq(:certain)
       end
     end
+
+    context "specific cases for Postgres", only: [:postgresql] do
+      it 'returns uncertain when the limit is 1 (find_by) and it has an index' do
+        # I didn't use find_by because it's not possible to do .find_by().to_sql
+        # However, where().limit(1) will generate the same query!
+        query = User.where(email: 'lala@popo.com').limit(1).to_sql
+
+        result = subject.analyse(sql: query)
+        expect(result).to eq(:uncertain)
+      end
+
+      it 'returns nil when not using limit and it has an index' do
+        query = User.where(email: 'lala@popo.com').to_sql
+
+        result = subject.analyse(sql: query)
+        expect(result).to eq(nil)
+      end
+    end
   end
 end

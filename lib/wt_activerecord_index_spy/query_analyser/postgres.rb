@@ -11,11 +11,16 @@ module WtActiverecordIndexSpy
 
         full_results = results.rows.join(", ").downcase
 
-        if full_results.include?("filter") && full_results.include?("seq scan on")
-          return { query => :certain }
+        if full_results.include?("seq scan on")
+          # Potgres use a seq scan for LIMIT queries even when the table has an
+          # index to be used. More details here: https://www.postgresql.org/message-id/17689.1098648713%40sss.pgh.pa.us
+          if full_results.include?("limit")
+            return { query => :uncertain }
+          else
+            return { query => :certain }
+          end
         end
 
-        #TODO: todo
         return {}
       end
     end

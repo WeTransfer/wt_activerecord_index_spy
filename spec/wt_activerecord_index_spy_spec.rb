@@ -49,7 +49,7 @@ RSpec.describe WtActiverecordIndexSpy do
     end
 
     context "when a query filter multiple fields with no index" do
-      it "adds the query to the certain list" do
+      it "adds the query to the certain list", only: [:mysql2] do
         User.create(name: "lala", age: 20)
         User.create(name: "lala2", age: 10)
 
@@ -134,7 +134,7 @@ RSpec.describe WtActiverecordIndexSpy do
         expect(@aggregator.results.uncertains.count).to eq(0)
       end
 
-      it "does not ignore queries originated outside tests" do
+      it "does not ignore queries originated outside tests", only: [:mysql2] do
         User.create(name: "lala")
         User.some_method_with_a_query_missing_index
 
@@ -143,7 +143,9 @@ RSpec.describe WtActiverecordIndexSpy do
     end
 
     context "when ignore_queries_originated_in_test_code=false" do
-      it "does not ignore queries originated in test code" do
+      let(:ignore_queries_originated_in_test_code) { false }
+
+      it "does not ignore queries originated in test code", only: [:mysql2] do
         User.create(name: "lala")
         User.find_by(name: "any")
 
