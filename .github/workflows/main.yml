@@ -20,11 +20,14 @@ jobs:
       run: |
         gem install bundler
         bundle install
-    - name: Tests for mysql2
+    - name: Create databases
       run: |
         sudo systemctl start mysql.service
+        sudo systemctl start postgresql.service
+        bundle exec rake db:drop db:create db:migrate
+    - name: Tests for mysql2
+      run: |
         bundle exec rspec
     - name: Tests for postgresql
       run: |
-        sudo systemctl start postgresql.service
         ADAPTER=postgresql bundle exec rspec
