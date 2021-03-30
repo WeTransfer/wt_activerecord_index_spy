@@ -16,9 +16,15 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-    - name: Run the default task
+    - name: install gems
       run: |
-        sudo systemctl start mysql.service
         gem install bundler
         bundle install
-        bundle exec rake
+    - name: Tests for mysql2
+      run: |
+        sudo systemctl start mysql.service
+        bundle exec rspec
+    - name: Tests for postgresql
+      run: |
+        sudo systemctl start postgresql.service
+        ADAPTER=postgresql bundle exec rspec
