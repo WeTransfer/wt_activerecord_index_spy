@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TestDatabase
   extend self
 
@@ -8,14 +10,14 @@ module TestDatabase
         host: ENV.fetch("MYSQL_DB_HOST", "localhost"),
         username: ENV.fetch("MYSQL_DB_USER", "root"),
         password: ENV.fetch("MYSQL_DB_PASSWORD", ""),
-        database: "wt_activerecord_index_spy_test",
+        database: "wt_activerecord_index_spy_test"
       },
       {
         adapter: "postgresql",
         host: ENV.fetch("POSTGRES_DB_HOST", "localhost"),
         username: ENV.fetch("POSTGRES_DB_USER", "postgres"),
         password: ENV.fetch("POSTGRES_DB_PASSWORD", ""),
-        database: "wt_activerecord_index_spy_test",
+        database: "wt_activerecord_index_spy_test"
       }
     ]
   end

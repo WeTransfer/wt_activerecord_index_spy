@@ -12,8 +12,7 @@ module WtActiverecordIndexSpy
         "no matching row"
       ].freeze
 
-      # rubocop:disable Metrics/CyclomaticComplexity
-      # rubocop:disable Metrics/PerceivedComplexity
+      # rubocop: disable Metrics/MethodLength
       def analyse(results, query:)
         analysed_queries = {}
 
@@ -34,16 +33,17 @@ module WtActiverecordIndexSpy
 
         analysed_queries
       end
-      # rubocop:enable Metrics/CyclomaticComplexity
-      # rubocop:enable Metrics/PerceivedComplexity
+      # rubocop: enable Metrics/MethodLength
 
       private
 
+      # rubocop: disable Metrics/CyclomaticComplexity
+      # rubocop: disable Metrics/PerceivedComplexity
       def analyse_explain(result)
-        type = result.fetch('type')
-        possible_keys = result.fetch('possible_keys')
-        key = result.fetch('key')
-        extra = result.fetch('Extra')
+        type = result.fetch("type")
+        possible_keys = result.fetch("possible_keys")
+        key = result.fetch("key")
+        extra = result.fetch("Extra")
 
         # more details about the result in https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
         return if type == "ref"
@@ -52,6 +52,8 @@ module WtActiverecordIndexSpy
         return :certain if possible_keys.nil?
         return :uncertain if possible_keys == "PRIMARY" && key.nil? && type == "ALL"
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
+      # rubocop: enable Metrics/PerceivedComplexity
     end
   end
 end

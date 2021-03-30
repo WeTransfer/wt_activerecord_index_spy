@@ -41,7 +41,7 @@ module WtActiverecordIndexSpy
       # `update_all`
       Thread.new do
         results = ActiveRecord::Base.connection_pool.with_connection do |conn|
-          conn.exec_query("EXPLAIN #{query}", 'SQL', type_casted_binds, prepare: true)
+          conn.exec_query("EXPLAIN #{query}", "SQL", type_casted_binds, prepare: true)
         end
 
         # The find is used to stop the loop when it's found the first query
@@ -49,7 +49,7 @@ module WtActiverecordIndexSpy
         result_explain_analisis = adapter.analyse(results, query: query)
         @analysed_queries.merge(result_explain_analisis)
 
-        non_nil = result_explain_analisis.find { |k,v| v != nil }
+        non_nil = result_explain_analisis.find { |_k, v| !v.nil? }
         non_nil && non_nil[1]
       end.join.value
     end
@@ -59,9 +59,9 @@ module WtActiverecordIndexSpy
 
     def select_adapter(connection)
       case connection.adapter_name
-      when 'Mysql2'
+      when "Mysql2"
         QueryAnalyser::Mysql
-      when 'PostgreSQL'
+      when "PostgreSQL"
         QueryAnalyser::Postgres
       else
         raise NotImplementedError, "adapter: #{ActiveRecord::Base.connection.adapter_name}"

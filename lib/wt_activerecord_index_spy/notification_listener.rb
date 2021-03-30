@@ -21,7 +21,7 @@ module WtActiverecordIndexSpy
       /^SELECT @@FOREIGN_KEY_CHECKS/,
       /^SET FOREIGN_KEY_CHECKS/,
       /^TRUNCATE TABLE/,
-      /^EXPLAIN/,
+      /^EXPLAIN/
     ].freeze
 
     attr_reader :queries_missing_index
@@ -47,7 +47,6 @@ module WtActiverecordIndexSpy
         logger.debug "query type ignored"
         return
       end
-      connection = values[:connection]
       logger.debug "query type accepted"
 
       origin = caller.find { |line| !line.include?("/gems/") }

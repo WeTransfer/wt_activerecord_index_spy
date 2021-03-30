@@ -1,28 +1,27 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/MethodLength
 require "dotenv/load"
 Dotenv.load
 
-ENV['RAILS_ENV'] = 'test'
+ENV["RAILS_ENV"] = "test"
 
 require "wt_activerecord_index_spy"
 require "active_record"
 require_relative "./support/test_database"
 
-if ENV['LOG_QUERIES']
-  ActiveRecord::Base.logger = Logger.new(STDOUT)
+if ENV["LOG_QUERIES"]
+  ActiveRecord::Base.logger = Logger.new($stdout)
   ActiveRecord::Base.logger.level = 0
 end
 
-if ENV['DEBUG']
-  WtActiverecordIndexSpy.logger = Logger.new(STDOUT)
+if ENV["DEBUG"]
+  WtActiverecordIndexSpy.logger = Logger.new($stdout)
   WtActiverecordIndexSpy.logger.level = 0
 end
 
-adapter = ENV.fetch('ADAPTER', 'mysql2')
+adapter = ENV.fetch("ADAPTER", "mysql2")
 
-db_configs = TestDatabase.configs.find{ |confs| confs[:adapter] == adapter }
+db_configs = TestDatabase.configs.find { |confs| confs[:adapter] == adapter }
 ActiveRecord::Base.configurations = { test: db_configs }
 ActiveRecord::Base.establish_connection
 
@@ -40,7 +39,7 @@ RSpec.configure do |config|
   end
 
   # Some tests may run only for a specific adapter, so we need to filter them
-  all_adapters = TestDatabase.configs.map {|db_config| db_config[:adapter]}
+  all_adapters = TestDatabase.configs.map { |db_config| db_config[:adapter] }
   other_adapters = all_adapters - [adapter]
   other_adapters.each do |other_adapter|
     config.filter_run_excluding(only: other_adapter.to_sym)
@@ -57,4 +56,3 @@ RSpec.configure do |config|
     c.max_formatted_output_length = 10_000
   end
 end
-# rubocop:enable Metrics/MethodLength

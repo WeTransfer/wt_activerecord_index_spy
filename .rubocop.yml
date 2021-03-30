@@ -17,6 +17,12 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
+    - 'Rakefile'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'Rakefile'
 
 Style/ModuleFunction:
   EnforcedStyle: extend_self
