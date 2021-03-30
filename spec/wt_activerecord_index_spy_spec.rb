@@ -41,7 +41,7 @@ RSpec.describe WtActiverecordIndexSpy do
 
     context "when a query uses some index" do
       it "does not add the query to result aggregator" do
-        User.find_by(email: "aa@aa.com")
+        User.where(email: "aa@aa.com").to_a
 
         expect(@aggregator.results.certains).to be_empty
         expect(@aggregator.results.uncertains).to be_empty
