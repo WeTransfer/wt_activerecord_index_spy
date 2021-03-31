@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MYSQL_DB_PASSWORD: root
+      POSTGRES_DB_PASSWORD: postgres
+      POSTGRES_DB_USER: postgres
     strategy:
       matrix:
         ruby:
