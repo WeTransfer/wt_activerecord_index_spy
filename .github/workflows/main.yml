@@ -9,6 +9,7 @@ jobs:
       MYSQL_DB_PASSWORD: root
       POSTGRES_DB_USER: root
       POSTGRES_DB_PASSWORD: root
+      POSTGRES_DB_HOST: 127.0.0.1
     strategy:
       matrix:
         ruby:
