@@ -115,6 +115,8 @@ Currently, it supports only specific versions of Ruby, ActiveRecord and MySql:
 
 **Mysql**: 5.7
 
+**Postgres**: 13.2
+
 **ActiveRecord**: 6.1
 
 **RSpec**: 3.x
