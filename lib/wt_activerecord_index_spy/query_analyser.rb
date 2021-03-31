@@ -30,11 +30,6 @@ module WtActiverecordIndexSpy
 
       adapter = select_adapter(connection)
 
-      # query_with_values = query
-      # if type_casted_binds.any?
-      #   query_with_values =
-      # end
-
       # We need a thread to use a different connection that it's used by the
       # application otherwise, it can change some ActiveRecord internal state
       # such as number_of_affected_rows that is returned by the method

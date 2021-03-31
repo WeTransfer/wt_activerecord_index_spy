@@ -165,7 +165,7 @@ RSpec.describe WtActiverecordIndexSpy do
   end
 
   describe ".export_html_results" do
-    it "adds a line with the correct origin in the HTML report", only: %i[mysql2 lala] do
+    it "adds a line with the correct origin in the HTML report", only: [:mysql2] do
       described_class.watch_queries(ignore_queries_originated_in_test_code: false) do
         User.find_by(name: "lala")
       end
