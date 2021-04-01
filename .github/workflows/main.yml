@@ -32,7 +32,6 @@ jobs:
         echo "create user root password 'root';" >> /tmp/create_user.sql
         echo "ALTER ROLE root WITH CREATEDB;" >> /tmp/create_user.sql
         sudo su postgres -c 'psql --file=/tmp/create_user.sql'
-        sudo su postgres -c 'createdb root'
         bundle exec rake db:drop db:create db:migrate
     - name: Tests for mysql2
       run: |
