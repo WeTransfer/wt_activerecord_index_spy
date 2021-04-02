@@ -28,7 +28,6 @@ end
 namespace :db do
   require_relative "./spec/support/test_database"
   require "active_record"
-  require "active_record/database_configurations"
   require "dotenv/load"
   Dotenv.load
 
