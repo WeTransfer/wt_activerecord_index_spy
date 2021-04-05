@@ -46,13 +46,13 @@ module WtActiverecordIndexSpy
         # test elements order
         elements = html.scan(%r{<td>([^<]+)</td>})
         expect(elements).to eq([
-          ["Level"], ["Identifier"], ["Query"], ["Origin"],
-          ["certain"], ["aa"], ["SELECT 3"], ["popo.rb"],
-          ["certain"], ["bb"], ["SELECT 4"], ["popo.rb"],
-          ["certain"], ["bb"], ["SELECT 41"], ["popo.rb"],
-          ["certain"], ["cc"], ["SELECT 1"], ["popo.rb"],
-          ["uncertain"], ["bb"], ["SELECT 2"], ["lala.rb"],
-        ])
+                                 ["Level"], ["Identifier"], ["Query"], ["Origin"],
+                                 ["certain"], ["aa"], ["SELECT 3"], ["popo.rb"],
+                                 ["certain"], ["bb"], ["SELECT 4"], ["popo.rb"],
+                                 ["certain"], ["bb"], ["SELECT 41"], ["popo.rb"],
+                                 ["certain"], ["cc"], ["SELECT 1"], ["popo.rb"],
+                                 ["uncertain"], ["bb"], ["SELECT 2"], ["lala.rb"]
+                               ])
 
         expect(stdout_spy).to have_received(:puts).with(/Report exported to/)
       end
