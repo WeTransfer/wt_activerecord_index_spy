@@ -40,7 +40,7 @@ module WtActiverecordIndexSpy
           conn.exec_query("EXPLAIN #{query}", "SQL", binds)
         end
 
-        adapter.analyse(results, query: query).tap do |certainity_level|
+        adapter.analyse(results).tap do |certainity_level|
           @analysed_queries[query] = certainity_level
         end
       end.join.value

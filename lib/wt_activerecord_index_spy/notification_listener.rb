@@ -67,7 +67,7 @@ module WtActiverecordIndexSpy
         identifier: identifier,
         query: query,
         origin: reduce_origin(origin),
-        certainity_level: certainity_level,
+        certainity_level: certainity_level
       )
 
       @aggregator.add(item)

@@ -12,15 +12,13 @@ module WtActiverecordIndexSpy
         "no matching row"
       ].freeze
 
-      # rubocop: disable Metrics/MethodLength
-      def analyse(results, query:)
+      def analyse(results)
         results.find do |result|
           certainity_level = analyse_explain(result)
 
           break certainity_level if certainity_level
         end
       end
-      # rubocop: enable Metrics/MethodLength
 
       private
 

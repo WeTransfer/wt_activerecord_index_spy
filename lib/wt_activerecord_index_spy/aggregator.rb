@@ -26,13 +26,13 @@ module WtActiverecordIndexSpy
     end
 
     def certain_results
-      @results.map do |query, item|
+      @results.map do |_query, item|
         item if item.certainity_level == :certain
       end.compact
     end
 
     def uncertain_results
-      @results.map do |query, item|
+      @results.map do |_query, item|
         item if item.certainity_level == :uncertain
       end.compact
     end

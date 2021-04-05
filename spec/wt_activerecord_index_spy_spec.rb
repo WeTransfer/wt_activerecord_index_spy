@@ -30,7 +30,7 @@ RSpec.describe WtActiverecordIndexSpy do
       end
     end
 
-    it 'add the prepared statement to results when it is available', only: [:postgresql] do
+    it "add the prepared statement to results when it is available", only: [:postgresql] do
       User.where(name: "lala").to_a
       User.where(name: "popo").to_a
 

@@ -6,18 +6,18 @@ module WtActiverecordIndexSpy
     module Postgres
       extend self
 
-      def analyse(results, query:)
+      def analyse(results)
         WtActiverecordIndexSpy.logger.debug("results:\n#{results.rows.join("\n")}")
 
         full_results = results.rows.join(", ").downcase
 
-        if full_results.include?("seq scan on")
-          # Postgres uses a seq scan for queries with LIMIT even when the table has an
-          # index to be used. More details here: https://www.postgresql.org/message-id/17689.1098648713%40sss.pgh.pa.us
-          return :uncertain if full_results.include?("limit")
+        return nil unless full_results.include?("seq scan on")
 
-          return :certain
-        end
+        # Postgres uses a seq scan for queries with LIMIT even when the table has an
+        # index to be used. More details here: https://www.postgresql.org/message-id/17689.1098648713%40sss.pgh.pa.us
+        return :uncertain if full_results.include?("limit")
+
+        :certain
       end
     end
   end
