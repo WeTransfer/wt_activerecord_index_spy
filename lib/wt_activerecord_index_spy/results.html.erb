@@ -8,7 +8,9 @@
         <td>Origin</td>
       </thead>
       <tbody>
-        <% (certain_results + uncertain_results).each do |item| -%>
+        <% (certain_results + uncertain_results)
+            .sort_by{ |item| [item.certainity_level, item.identifier, item.query] }
+            .each do |item| -%>
           <tr>
             <td><%= item.certainity_level %></td>
             <td><%= item.identifier %></td>
