@@ -14,7 +14,7 @@ module WtActiverecordIndexSpy
         end
 
         if only_certains
-          WtActiverecordIndexSpy.results.certains.empty?
+          WtActiverecordIndexSpy.certain_results.empty?
         else
           WtActiverecordIndexSpy.results.empty?
         end

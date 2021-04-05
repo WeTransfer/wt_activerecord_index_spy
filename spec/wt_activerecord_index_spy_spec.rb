@@ -25,17 +25,25 @@ RSpec.describe WtActiverecordIndexSpy do
       it "adds the query to the certain list" do
         User.where(name: "lala").to_a
 
-        expect(@aggregator.results.certains.count).to eq(1)
-        expect(@aggregator.results.uncertains.count).to eq(0)
+        expect(@aggregator.certain_results.count).to eq(1)
+        expect(@aggregator.uncertain_results.count).to eq(0)
       end
+    end
+
+    it 'add the prepared statement to results when it is available', only: [:postgresql] do
+      User.where(name: "lala").to_a
+      User.where(name: "popo").to_a
+
+      expect(@aggregator.certain_results.count).to eq(1)
+      expect(@aggregator.certain_results.first.query).to eq('SELECT "users".* FROM "users" WHERE "users"."name" = $1')
     end
 
     context "when a query uses the primary key index" do
       it "does not add the query to result aggregator" do
         User.find_by(id: 1)
 
-        expect(@aggregator.results.certains).to be_empty
-        expect(@aggregator.results.uncertains).to be_empty
+        expect(@aggregator.certain_results).to be_empty
+        expect(@aggregator.uncertain_results).to be_empty
       end
     end
 
@@ -43,8 +51,8 @@ RSpec.describe WtActiverecordIndexSpy do
       it "does not add the query to result aggregator" do
         User.where(email: "aa@aa.com").to_a
 
-        expect(@aggregator.results.certains).to be_empty
-        expect(@aggregator.results.uncertains).to be_empty
+        expect(@aggregator.certain_results).to be_empty
+        expect(@aggregator.uncertain_results).to be_empty
       end
     end
 
@@ -55,7 +63,7 @@ RSpec.describe WtActiverecordIndexSpy do
 
         User.find_by(age: 20, name: "popo")
 
-        expect(@aggregator.results.certains.count).to eq(1)
+        expect(@aggregator.certain_results.count).to eq(1)
       end
     end
 
@@ -65,8 +73,8 @@ RSpec.describe WtActiverecordIndexSpy do
 
         User.where(id: 1, email: "aa@aa.com", age: 20).to_a
 
-        expect(@aggregator.results.certains).to be_empty
-        expect(@aggregator.results.uncertains).to be_empty
+        expect(@aggregator.certain_results).to be_empty
+        expect(@aggregator.uncertain_results).to be_empty
       end
     end
 
@@ -78,8 +86,8 @@ RSpec.describe WtActiverecordIndexSpy do
 
         User.where(city_id: 1).to_a
 
-        expect(@aggregator.results.certains).to be_empty
-        expect(@aggregator.results.uncertains).to be_empty
+        expect(@aggregator.certain_results).to be_empty
+        expect(@aggregator.uncertain_results).to be_empty
       end
     end
 
@@ -96,10 +104,10 @@ RSpec.describe WtActiverecordIndexSpy do
         cities = City.where(name: "Santo Andre")
         User.where(city_id: cities).to_a
 
-        expect(@aggregator.results.certains.count).to eq(0)
-        expect(@aggregator.results.uncertains.count).to eq(1)
-        expect(@aggregator.results.uncertains.first.identifier).to eq("User Load")
-        expect(@aggregator.results.uncertains.first.query)
+        expect(@aggregator.certain_results.count).to eq(0)
+        expect(@aggregator.uncertain_results.count).to eq(1)
+        expect(@aggregator.uncertain_results.first.identifier).to eq("User Load")
+        expect(@aggregator.uncertain_results.first.query)
           .to include("WHERE `users`.`city_id` IN")
       end
 
@@ -115,10 +123,10 @@ RSpec.describe WtActiverecordIndexSpy do
         cities = City.where(name: "Santo Andre")
         User.where(city_id: cities).to_a
 
-        expect(@aggregator.results.certains.count).to eq(1)
-        expect(@aggregator.results.uncertains.count).to eq(0)
-        expect(@aggregator.results.certains.first.identifier).to eq("User Load")
-        expect(@aggregator.results.certains.first.query)
+        expect(@aggregator.certain_results.count).to eq(1)
+        expect(@aggregator.uncertain_results.count).to eq(0)
+        expect(@aggregator.certain_results.first.identifier).to eq("User Load")
+        expect(@aggregator.certain_results.first.query)
           .to include("WHERE \"cities\".\"name\" = $1")
       end
     end
@@ -130,15 +138,15 @@ RSpec.describe WtActiverecordIndexSpy do
         User.create(name: "lala")
         User.find_by(name: "any")
 
-        expect(@aggregator.results.certains.count).to eq(0)
-        expect(@aggregator.results.uncertains.count).to eq(0)
+        expect(@aggregator.certain_results.count).to eq(0)
+        expect(@aggregator.uncertain_results.count).to eq(0)
       end
 
       it "does not ignore queries originated outside tests", only: [:mysql2] do
         User.create(name: "lala")
         User.some_method_with_a_query_missing_index
 
-        expect(@aggregator.results.certains.count).to eq(1)
+        expect(@aggregator.certain_results.count).to eq(1)
       end
     end
 
@@ -149,7 +157,7 @@ RSpec.describe WtActiverecordIndexSpy do
         User.create(name: "lala")
         User.find_by(name: "any")
 
-        expect(@aggregator.results.certains.count).to eq(1)
+        expect(@aggregator.certain_results.count).to eq(1)
       end
     end
 

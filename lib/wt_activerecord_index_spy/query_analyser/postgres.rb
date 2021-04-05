@@ -14,12 +14,10 @@ module WtActiverecordIndexSpy
         if full_results.include?("seq scan on")
           # Postgres uses a seq scan for queries with LIMIT even when the table has an
           # index to be used. More details here: https://www.postgresql.org/message-id/17689.1098648713%40sss.pgh.pa.us
-          return { query => :uncertain } if full_results.include?("limit")
+          return :uncertain if full_results.include?("limit")
 
-          return { query => :certain }
+          return :certain
         end
-
-        {}
       end
     end
   end

@@ -40,13 +40,9 @@ module WtActiverecordIndexSpy
           conn.exec_query("EXPLAIN #{query}", "SQL", binds)
         end
 
-        # The find is used to stop the loop when it's found the first query
-        # which does not use indexes
-        result_explain_analisis = adapter.analyse(results, query: query)
-        @analysed_queries.merge(result_explain_analisis)
-
-        non_nil = result_explain_analisis.find { |_k, v| !v.nil? }
-        non_nil && non_nil[1]
+        adapter.analyse(results, query: query).tap do |certainity_level|
+          @analysed_queries[query] = certainity_level
+        end
       end.join.value
     end
     # rubocop:enable Metrics/MethodLength

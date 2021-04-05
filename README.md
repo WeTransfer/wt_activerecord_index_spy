@@ -93,6 +93,8 @@ It's possible to disable it as follows:
 WtActiverecordIndexSpy.watch_queries(ignore_queries_originated_in_test_code: false)
 ```
 
+If the same query runs in many places, only one origin will be added to the table above.
+
 ### 3 - Watching all queries given a block
 
 It's also possible to enable it in a specific context, using a block:

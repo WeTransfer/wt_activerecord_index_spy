@@ -51,6 +51,10 @@ module WtActiverecordIndexSpy
     aggregator.export_html_results(file, stdout: stdout)
   end
 
+  def certain_results
+    aggregator.certain_results
+  end
+
   def results
     aggregator.results
   end

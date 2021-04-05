@@ -66,10 +66,11 @@ module WtActiverecordIndexSpy
       item = Aggregator::Item.new(
         identifier: identifier,
         query: query,
-        origin: reduce_origin(origin)
+        origin: reduce_origin(origin),
+        certainity_level: certainity_level,
       )
 
-      @aggregator.add(item, certainity_level)
+      @aggregator.add(item)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength

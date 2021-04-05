@@ -14,24 +14,11 @@ module WtActiverecordIndexSpy
 
       # rubocop: disable Metrics/MethodLength
       def analyse(results, query:)
-        analysed_queries = {}
-
-        results.each do |result|
+        results.find do |result|
           certainity_level = analyse_explain(result)
 
-          if certainity_level
-            # The result is cached to not run the EXPLAIN query again in the
-            # future
-            analysed_queries[query] = certainity_level
-            # Some queries are composed of subqueries, but for now we will
-            # stop when one of them does not use index
-            break
-          else
-            analysed_queries[query] = nil
-          end
+          break certainity_level if certainity_level
         end
-
-        analysed_queries
       end
       # rubocop: enable Metrics/MethodLength
 
