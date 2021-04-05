@@ -60,7 +60,7 @@ module WtActiverecordIndexSpy
 
       logger.debug "origin accepted: #{origin}"
 
-      certainity_level = @query_index_analyser.analyse(**values.slice(:sql, :connection, :type_casted_binds))
+      certainity_level = @query_index_analyser.analyse(**values.slice(:sql, :connection, :binds))
       return unless certainity_level
 
       item = Aggregator::Item.new(

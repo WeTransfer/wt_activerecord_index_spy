@@ -21,9 +21,8 @@ end
 
 adapter = ENV.fetch("ADAPTER", "mysql2")
 
-db_configs = TestDatabase.configs.find { |confs| confs[:adapter] == adapter }
-ActiveRecord::Base.configurations = { test: db_configs }
-ActiveRecord::Base.establish_connection
+TestDatabase.set_env_database_url(adapter, with_database_name: true)
+TestDatabase.establish_connection
 
 require_relative "./support/models"
 
@@ -39,7 +38,7 @@ RSpec.configure do |config|
   end
 
   # Some tests may run only for a specific adapter, so we need to filter them
-  all_adapters = TestDatabase.configs.map { |db_config| db_config[:adapter] }
+  all_adapters = TestDatabase.adapters
   other_adapters = all_adapters - [adapter]
   other_adapters.each do |other_adapter|
     config.filter_run_excluding(only: other_adapter.to_sym)

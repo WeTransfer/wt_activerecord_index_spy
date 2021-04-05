@@ -15,7 +15,7 @@ module WtActiverecordIndexSpy
     # - Postregs: sends sql in a form of prepared statement and its values in type_casted_binds
     #
     # rubocop:disable Metrics/MethodLength
-    def analyse(sql:, connection: ActiveRecord::Base.connection, type_casted_binds: [])
+    def analyse(sql:, connection: ActiveRecord::Base.connection, binds: [])
       query = sql
       # TODO: this could be more intelligent to not duplicate similar queries
       # with different WHERE values, example:
@@ -36,7 +36,7 @@ module WtActiverecordIndexSpy
       # `update_all`
       Thread.new do
         results = ActiveRecord::Base.connection_pool.with_connection do |conn|
-          conn.exec_query("EXPLAIN #{query}", "SQL", type_casted_binds, prepare: true)
+          conn.exec_query("EXPLAIN #{query}", "SQL", binds)
         end
 
         # The find is used to stop the loop when it's found the first query

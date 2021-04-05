@@ -37,6 +37,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "dotenv"
   spec.add_development_dependency "gemfury"
   spec.add_development_dependency "mysql2"
+  # for active_record 4
+  # spec.add_development_dependency "pg", "~> 0.15"
   spec.add_development_dependency "pg"
   spec.add_development_dependency "pry-byebug"
 end

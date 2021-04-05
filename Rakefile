@@ -33,34 +33,28 @@ namespace :db do
 
   desc "Create databases to be used in tests"
   task "create" do
-    db_configs = TestDatabase.configs
-
-    db_configs.each do |db_config|
-      puts "Creating database #{db_config[:adapter]}"
-      ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
-      ActiveRecord::Base.connection.create_database(db_config[:database])
-    end
+    adapter = ENV.fetch('ADAPTER', 'mysql2')
+    puts "Creating #{adapter}"
+    TestDatabase.set_env_database_url(adapter)
+    TestDatabase.establish_connection
+    ActiveRecord::Base.connection.create_database(TestDatabase.database_name)
   end
 
   desc "Drop databases to be used in tests"
   task "drop" do
-    db_configs = TestDatabase.configs
-
-    db_configs.each do |db_config|
-      puts "Dropping database #{db_config[:adapter]}"
-      ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
-      ActiveRecord::Base.connection.drop_database(db_config[:database])
-    end
+    adapter = ENV.fetch('ADAPTER', 'mysql2')
+    puts "Dropping #{adapter}"
+    TestDatabase.set_env_database_url(adapter)
+    TestDatabase.establish_connection
+    ActiveRecord::Base.connection.drop_database(TestDatabase.database_name)
   end
 
   desc "Migrate databases to be used in tests"
   task "migrate" do
-    db_configs = TestDatabase.configs
-
-    db_configs.each do |db_config|
-      puts "Migrating database #{db_config[:adapter]}"
-      ActiveRecord::Base.establish_connection(db_config)
-      TestDatabase.run_migrations
-    end
+    adapter = ENV.fetch('ADAPTER', 'mysql2')
+    puts "Migrating #{adapter}"
+    TestDatabase.set_env_database_url(adapter, with_database_name: true)
+    TestDatabase.establish_connection
+    TestDatabase.run_migrations
   end
 end
