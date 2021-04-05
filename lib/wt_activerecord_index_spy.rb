@@ -26,14 +26,14 @@ module WtActiverecordIndexSpy
   def watch_queries(
     aggregator: self.aggregator,
     ignore_queries_originated_in_test_code: true,
-    query_index_analyser: query_analyser
+    query_analyser: self.query_analyser
   )
     aggregator.reset
 
     notification_listener = NotificationListener.new(
       aggregator: aggregator,
       ignore_queries_originated_in_test_code: ignore_queries_originated_in_test_code,
-      query_index_analyser: query_index_analyser
+      query_analyser: query_analyser
     )
 
     subscriber = ActiveSupport::Notifications

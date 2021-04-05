@@ -28,10 +28,10 @@ module WtActiverecordIndexSpy
 
     def initialize(ignore_queries_originated_in_test_code:,
                    aggregator: Aggregator.new,
-                   query_index_analyser: QueryIndexAnalyser.new)
+                   query_analyser: QueryAnalyser.new)
       @queries_missing_index = []
       @aggregator = aggregator
-      @query_index_analyser = query_index_analyser
+      @query_analyser = query_analyser
       @ignore_queries_originated_in_test_code = ignore_queries_originated_in_test_code
     end
 
@@ -60,7 +60,7 @@ module WtActiverecordIndexSpy
 
       logger.debug "origin accepted: #{origin}"
 
-      certainity_level = @query_index_analyser.analyse(**values.slice(:sql, :connection, :binds))
+      certainity_level = @query_analyser.analyse(**values.slice(:sql, :connection, :binds))
       return unless certainity_level
 
       item = Aggregator::Item.new(
