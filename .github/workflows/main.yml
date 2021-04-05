@@ -6,10 +6,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      MYSQL_DB_PASSWORD: root
-      POSTGRES_DB_USER: root
-      POSTGRES_DB_PASSWORD: root
-      POSTGRES_DB_HOST: 127.0.0.1
+      DATABASE_URL_MYSQL2: 'mysql2://root:root@127.0.0.1:3306'
+      DATABASE_URL_POSTGRESQL: 'postgresql://root:root@127.0.0.1:5432'
     strategy:
       matrix:
         ruby:
