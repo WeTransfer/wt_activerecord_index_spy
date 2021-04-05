@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'rspec/matchers'
 
 module WtActiverecordIndexSpy
   # This module defines the helper have_used_db_indexes to use in RSpec tests

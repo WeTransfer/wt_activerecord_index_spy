@@ -33,6 +33,8 @@ There are 2 different modes to use it:
 Include the helper in your RSpec configuration:
 
 ```ruby
+require 'wt_activerecord_index_spy/test_helpers'
+
 RSpec.configure do |config|
   config.include(WtActiverecordIndexSpy::TestHelpers)
 end

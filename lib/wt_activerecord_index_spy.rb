@@ -6,7 +6,6 @@ require_relative "wt_activerecord_index_spy/query_analyser"
 require_relative "wt_activerecord_index_spy/query_analyser/mysql"
 require_relative "wt_activerecord_index_spy/query_analyser/postgres"
 require_relative "wt_activerecord_index_spy/notification_listener"
-require_relative "wt_activerecord_index_spy/test_helpers"
 require "logger"
 
 # This is the top level module which requires everything
