@@ -4,16 +4,21 @@ on: [push, pull_request]
 
 jobs:
   build:
+    name: Ruby ${{ matrix.ruby }}, ActiveRecord ${{ matrix.activerecord }}
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL_MYSQL2: 'mysql2://root:root@127.0.0.1:3306'
-      DATABASE_URL_POSTGRESQL: 'postgresql://root:root@127.0.0.1:5432'
     strategy:
-      # TODO: add matrix for activerecord 4.x and 5.x
       matrix:
         ruby:
           - 2.7
           - 2.6
+        activerecord:
+          - '~> 6'
+          - '~> 5'
+          - '~> 4'
+    env:
+      DATABASE_URL_MYSQL2: 'mysql2://root:root@127.0.0.1:3306'
+      DATABASE_URL_POSTGRESQL: 'postgresql://root:root@127.0.0.1:5432'
+      ACTIVE_RECORD_VERSION: ${{ matrix.activerecord }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
