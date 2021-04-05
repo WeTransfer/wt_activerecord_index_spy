@@ -54,7 +54,8 @@ module WtActiverecordIndexSpy
       content = ERB
                 .new(
                   File.read(File.join(File.dirname(__FILE__), "./results.html.erb")),
-                  trim_mode: "-"
+                  0,
+                  "-"
                 )
                 .result_with_hash(results: @results)
 

@@ -88,7 +88,7 @@ module WtActiverecordIndexSpy
 
     def reduce_origin(origin)
       origin[0...origin.rindex(":")]
-        .split("/")[-2..]
+        .split("/")[-2..-1]
         .join("/")
     end
 
