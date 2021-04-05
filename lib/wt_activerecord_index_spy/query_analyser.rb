@@ -26,6 +26,7 @@ module WtActiverecordIndexSpy
       # will save the queries without the values.
       # - The Mysql2 adapter does not use prepared statements as default, so it
       # will analyse very similar queries as described above.
+      # TODO: check if it is caching prepared statements (it should)
       return @analysed_queries[query] if @analysed_queries.key?(query)
 
       adapter = select_adapter(connection)
