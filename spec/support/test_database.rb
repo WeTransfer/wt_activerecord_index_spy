@@ -4,23 +4,21 @@ module TestDatabase
   extend self
 
   def adapters
-    ['mysql2', 'postgresql']
+    %w[mysql2 postgresql]
   end
 
   def database_name
-    ENV.fetch('DATABASE_NAME', 'wt_activerecord_index_spy_test')
+    ENV.fetch("DATABASE_NAME", "wt_activerecord_index_spy_test")
   end
 
   def set_env_database_url(adapter, with_database_name: false)
-    ENV['DATABASE_URL'] = ENV.fetch("DATABASE_URL_#{adapter.upcase}")
+    ENV["DATABASE_URL"] = ENV.fetch("DATABASE_URL_#{adapter.upcase}")
 
-    if with_database_name
-      ENV['DATABASE_URL'] += "/#{database_name}"
-    end
+    ENV["DATABASE_URL"] += "/#{database_name}" if with_database_name
   end
 
   def establish_connection
-    ActiveRecord::Base.establish_connection(ENV.fetch('DATABASE_URL'))
+    ActiveRecord::Base.establish_connection(ENV.fetch("DATABASE_URL"))
   end
 
   def run_migrations

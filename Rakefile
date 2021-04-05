@@ -33,7 +33,7 @@ namespace :db do
 
   desc "Create databases to be used in tests"
   task "create" do
-    adapter = ENV.fetch('ADAPTER', 'mysql2')
+    adapter = ENV.fetch("ADAPTER", "mysql2")
     puts "Creating #{adapter}"
     TestDatabase.set_env_database_url(adapter)
     TestDatabase.establish_connection
@@ -42,7 +42,7 @@ namespace :db do
 
   desc "Drop databases to be used in tests"
   task "drop" do
-    adapter = ENV.fetch('ADAPTER', 'mysql2')
+    adapter = ENV.fetch("ADAPTER", "mysql2")
     puts "Dropping #{adapter}"
     TestDatabase.set_env_database_url(adapter)
     TestDatabase.establish_connection
@@ -51,7 +51,7 @@ namespace :db do
 
   desc "Migrate databases to be used in tests"
   task "migrate" do
-    adapter = ENV.fetch('ADAPTER', 'mysql2')
+    adapter = ENV.fetch("ADAPTER", "mysql2")
     puts "Migrating #{adapter}"
     TestDatabase.set_env_database_url(adapter, with_database_name: true)
     TestDatabase.establish_connection
