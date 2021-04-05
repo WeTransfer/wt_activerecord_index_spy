@@ -111,13 +111,13 @@ WtActiverecordIndexSpy.export_html_results
 
 Currently, it supports only specific versions of Ruby, ActiveRecord and MySql:
 
-**Ruby**: 2.7, 2.6
+**Ruby**: 2.7, 2.6, 2.5
 
 **Mysql**: 5.7
 
 **Postgres**: 13.2
 
-**ActiveRecord**: 6.1
+**ActiveRecord**: 6, 5, 4
 
 **RSpec**: 3.x
 
