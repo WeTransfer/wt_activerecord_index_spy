@@ -51,13 +51,8 @@ module WtActiverecordIndexSpy
 
     def export_html_results(file, stdout: $stdout)
       file ||= default_html_output_file
-      content = ERB
-                .new(
-                  File.read(File.join(File.dirname(__FILE__), "./results.html.erb")),
-                  0,
-                  "-"
-                )
-                .result_with_hash(results: @results)
+      content = ERB.new(File.read(File.join(File.dirname(__FILE__), "./results.html.erb")), 0, "-")
+                   .result_with_hash(results: @results)
 
       file.write(content)
       file.close

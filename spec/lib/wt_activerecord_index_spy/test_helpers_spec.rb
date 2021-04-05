@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe "test_helpers" do
-  require 'wt_activerecord_index_spy/test_helpers'
+  require "wt_activerecord_index_spy/test_helpers"
   include WtActiverecordIndexSpy::TestHelpers
 
   describe "matcher have_used_db_indexes" do
