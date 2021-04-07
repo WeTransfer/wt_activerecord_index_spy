@@ -10,10 +10,9 @@ module WtActiverecordIndexSpy
       @analysed_queries = {}
     end
 
-    # The sql and type_casted_binds vary depend on the adapter.
-    # - Mysql2: sends sql complete and type_casted_binds = []
-    # - Postregs: sends sql in a form of prepared statement and its values in type_casted_binds
-    #
+    # The sql and binds vary depend on the adapter.
+    # - Mysql2: sends sql complete and binds = []
+    # - Postregs: sends sql in a form of prepared statement and its values in binds
     # rubocop:disable Metrics/MethodLength
     def analyse(sql:, connection: ActiveRecord::Base.connection, binds: [])
       query = sql
@@ -26,7 +25,6 @@ module WtActiverecordIndexSpy
       # will save the queries without the values.
       # - The Mysql2 adapter does not use prepared statements as default, so it
       # will analyse very similar queries as described above.
-      # TODO: check if it is caching prepared statements (it should)
       return @analysed_queries[query] if @analysed_queries.key?(query)
 
       adapter = select_adapter(connection)
