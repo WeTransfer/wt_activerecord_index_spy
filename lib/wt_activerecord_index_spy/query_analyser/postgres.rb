@@ -11,6 +11,7 @@ module WtActiverecordIndexSpy
 
         full_results = results.rows.join(", ").downcase
 
+        # rubocop:disable Layout/LineLength
         # Postgres sometimes uses a "seq scan" even for queries that could use an index.
         # So it's almost impossible to be certain if an index is missing!
         # The result of the EXPLAIN query varies depending on the state of the database
@@ -45,6 +46,7 @@ module WtActiverecordIndexSpy
         #    Recheck Cond: (plan_id = 312312)
         #    ->  Bitmap Index Scan on index_features_on_plan_id  (cost=0.00..4.18 rows=4 width=0)
         #          Index Cond: (plan_id = 312312)
+        # rubocop:enable Layout/LineLength
         return :uncertain if full_results.include?("seq scan on")
       end
     end
