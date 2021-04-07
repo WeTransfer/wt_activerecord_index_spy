@@ -22,11 +22,18 @@ RSpec.describe WtActiverecordIndexSpy do
 
     # TODO: move these tests to query_analyser
     context "when a query does not use an index" do
-      it "adds the query to the certain list" do
+      it "adds the query to the certain list", only: [:mysql2] do
         User.where(name: "lala").to_a
 
         expect(@aggregator.certain_results.count).to eq(1)
         expect(@aggregator.uncertain_results.count).to eq(0)
+      end
+
+      it "adds the query to the uncertain list", only: [:postgresql] do
+        User.where(name: "lala").to_a
+
+        expect(@aggregator.certain_results.count).to eq(0)
+        expect(@aggregator.uncertain_results.count).to eq(1)
       end
     end
 
@@ -34,8 +41,8 @@ RSpec.describe WtActiverecordIndexSpy do
       User.where(name: "lala").to_a
       User.where(name: "popo").to_a
 
-      expect(@aggregator.certain_results.count).to eq(1)
-      expect(@aggregator.certain_results.first.query).to eq('SELECT "users".* FROM "users" WHERE "users"."name" = $1')
+      expect(@aggregator.uncertain_results.count).to eq(1)
+      expect(@aggregator.uncertain_results.first.query).to eq('SELECT "users".* FROM "users" WHERE "users"."name" = $1')
     end
 
     context "when a query uses the primary key index" do
@@ -111,7 +118,7 @@ RSpec.describe WtActiverecordIndexSpy do
           .to include("WHERE `users`.`city_id` IN")
       end
 
-      it "adds the query to the certain list", only: [:postgresql] do
+      it "adds the query to the uncertain list", only: [:postgresql] do
         City.create!(name: "Rio", id: 1)
         City.create!(name: "Santo Andre", id: 2)
         City.create!(name: "Maua", id: 3)
@@ -123,10 +130,10 @@ RSpec.describe WtActiverecordIndexSpy do
         cities = City.where(name: "Santo Andre")
         User.where(city_id: cities).to_a
 
-        expect(@aggregator.certain_results.count).to eq(1)
-        expect(@aggregator.uncertain_results.count).to eq(0)
-        expect(@aggregator.certain_results.first.identifier).to eq("User Load")
-        expect(@aggregator.certain_results.first.query)
+        expect(@aggregator.certain_results.count).to eq(0)
+        expect(@aggregator.uncertain_results.count).to eq(1)
+        expect(@aggregator.uncertain_results.first.identifier).to eq("User Load")
+        expect(@aggregator.uncertain_results.first.query)
           .to include("WHERE \"cities\".\"name\" = $1")
       end
     end
