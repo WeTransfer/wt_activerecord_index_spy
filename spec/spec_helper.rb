@@ -24,7 +24,7 @@ adapter = ENV.fetch("ADAPTER", "mysql2")
 TestDatabase.set_env_database_url(adapter, with_database_name: true)
 TestDatabase.establish_connection
 
-require_relative "./support/models"
+require_relative "../lib/wt_activerecord_index_spy/test_models"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

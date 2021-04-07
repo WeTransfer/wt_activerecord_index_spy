@@ -50,7 +50,7 @@ module WtActiverecordIndexSpy
       logger.debug "query type accepted"
 
       origin = caller.find { |line| !line.include?("/gems/") }
-      if @ignore_queries_originated_in_test_code && (origin.include?("_spec") || origin.include?("_test"))
+      if @ignore_queries_originated_in_test_code && query_originated_in_tests?(origin)
         logger.debug "origin ignored: #{origin}"
         # Hopefully, it will get the line which executed the query.
         # It ignores activerecord, activesupport and other gem frames.
@@ -76,6 +76,12 @@ module WtActiverecordIndexSpy
     # rubocop:enable Metrics/MethodLength
 
     private
+
+    # TODO: Find a better way to detect if the origin is a test file
+    def query_originated_in_tests?(origin)
+      origin.include?("spec/") ||
+        origin.include?("test/")
+    end
 
     def ignore_query?(name:, query:)
       # FIXME: this seems bad. we should probably have a better way to indicate
