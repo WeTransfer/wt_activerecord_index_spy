@@ -26,7 +26,7 @@ Or install it yourself as:
 
 ## Usage
 
-There are 2 different modes to use it:
+There are 3 different modes to use it:
 
 ### 1 - Using a test matcher
 
@@ -67,13 +67,15 @@ WtActiverecordIndexSpy.watch_queries
 After that, `wt_activerecord_index_spy` will run an `EXPLAIN` query for every query
 fired with `ActiveRecord` that has a `WHERE` condition.
 
-After that, you can generate a report with the results:
+Finally, you can generate a report with the results:
 
 ```ruby
 WtActiverecordIndexSpy.export_html_results
 ```
 
-Which creates a table similar to this:
+This method creates an HTML file with a report and prints its location to STDOUT.
+
+The content of this file is similar to this:
 
 | Level | Identifier | Query | Origin |
 | ----  | ---------- | ----- | ------ |
@@ -81,11 +83,11 @@ Which creates a table similar to this:
 | uncertain | User Load | SELECT `users`.* FROM `users` WHERE `users`.`city_id` IN (SELECT `cities`.`id` FROM `cities` WHERE `cities`.`name` = 'Santo Andre') | spec/wt_activerecord_index_spy_spec.rb:173 |
 
 Where:
-- **Level**: `certain` when an index is certain to be missing, or `uncertain` when it's not possible to be sure
+- **Level**: `certain` when it is certain that an index is missing, or `uncertain` when it's not possible to be sure
 - **Identifier**: is the query identifier reported `ActiveRecord` notification
 - **Origin**: is the line the query was fired
 
-This mode, by default, **ignores** queries that were originated in test code. For that, it looks for files which name includes `_test` or `_spec`.
+This mode, by default, **ignores** queries that were originated in test code. For that, it considers files which path includes `test/` or `spec/`.
 
 It's possible to disable it as follows:
 
@@ -93,7 +95,17 @@ It's possible to disable it as follows:
 WtActiverecordIndexSpy.watch_queries(ignore_queries_originated_in_test_code: false)
 ```
 
-If the same query runs in many places, only one origin will be added to the table above.
+If the same query runs in many places, only one origin will be added to the report.
+
+It's also possible to get the results using the following methods:
+
+```ruby
+# Returns a list of certain results
+WtActiverecordIndexSpy.certain_results
+
+# Returns a list of certain and uncertain results mixed
+WtActiverecordIndexSpy.results
+```
 
 ### 3 - Watching all queries given a block
 
@@ -113,13 +125,17 @@ WtActiverecordIndexSpy.export_html_results
 
 ## Supported versions
 
-Currently, it supports only specific versions of Ruby, ActiveRecord and MySql:
+Currently, it supports:
 
 **Ruby**: 2.7, 2.6, 2.5
 
 **Mysql**: 5.7
 
-**Postgres**: 13.2
+**PostgreSQL**: 13.2
+
+Note: Currently, the PostgreSQL query analyser is not so intelligent and can't be
+certain if an index is missing or not. So all results are `uncertain`. More
+details in https://github.com/WeTransfer/wt_activerecord_index_spy/issues/12
 
 **ActiveRecord**: 6, 5, 4
 
@@ -129,15 +145,15 @@ Currently, it supports only specific versions of Ruby, ActiveRecord and MySql:
 
 After checking out the repo, run `cp .env.template .env` and set database credentials to run the tests.
 
-Run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Run `bin/setup` to install dependencies.
+
+Then, run `bundle exec rake db:create db:migrate` to create the Mysql databases and `ADAPTER=postgresql bundle exec rake db:create db:migrate` to create the PostgresSQL database.
+
+Then, run `bundle exec rspec` to run the tests for Mysql and `ADAPTER=postgresql bundle exec rspec`.
+
+You can also run `bundle exec bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-Before running the tests, it's required to create the test database:
-
-```bash
-bundle exec rake db:create db:migrate
-```
 
 ## Contributing
 
