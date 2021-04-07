@@ -11,10 +11,12 @@ gem "rspec", "~> 3.0"
 
 gem "rubocop", "~> 1.7"
 
-gem "activerecord", ENV.fetch("ACTIVE_RECORD_VERSION")
-gem "activesupport", ENV.fetch("ACTIVE_RECORD_VERSION")
+active_record_version = ENV.fetch("ACTIVE_RECORD_VERSION", '~> 4')
 
-if ENV.fetch("ACTIVE_RECORD_VERSION") == "~> 4"
+gem "activerecord", active_record_version
+gem "activesupport", active_record_version
+
+if active_record_version == "~> 4"
   gem "pg", "~> 0.15"
 else
   gem "pg"
