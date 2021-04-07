@@ -60,9 +60,6 @@ RSpec.describe WtActiverecordIndexSpy::QueryAnalyser do
         city = City.create!(name: "Santo Andre")
         _user = User.create!(city: city, name: "Lala")
 
-        # TODO: a query abaixo esta dando certain na product-manager e nao deveria
-        # SELECT "bundles".* FROM "bundles" WHERE "bundles"."plan_id" = 764438051
-
         query = User.where(city_id: city.id).to_sql
         result = subject.analyse(sql: query)
 
