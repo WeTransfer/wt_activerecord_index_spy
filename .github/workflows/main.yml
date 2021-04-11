@@ -4,21 +4,48 @@ on: [push, pull_request]
 
 jobs:
   build:
+    name: Ruby ${{ matrix.ruby }}, ActiveRecord ${{ matrix.activerecord }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         ruby:
           - 2.7
           - 2.6
+          - 2.5
+        activerecord:
+          - '~> 6'
+          - '~> 5'
+          - '~> 4'
+        exclude:
+          - ruby: 2.7
+            activerecord: '~> 4'
+    env:
+      DATABASE_URL_MYSQL2: 'mysql2://root:root@127.0.0.1:3306'
+      DATABASE_URL_POSTGRESQL: 'postgresql://root:root@127.0.0.1:5432'
+      ACTIVE_RECORD_VERSION: ${{ matrix.activerecord }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-    - name: Run the default task
+    - name: install gems
       run: |
-        sudo systemctl start mysql.service
         gem install bundler
         bundle install
-        bundle exec rake
+    - name: Create databases
+      run: |
+        sudo systemctl start mysql.service
+        sudo systemctl start postgresql.service
+        echo "create user root password 'root';" >> /tmp/create_user.sql
+        echo "ALTER ROLE root WITH CREATEDB;" >> /tmp/create_user.sql
+        sudo su postgres -c 'psql --file=/tmp/create_user.sql'
+        sudo su postgres -c 'createdb root'
+        bundle exec rake db:drop db:create db:migrate
+        ADAPTER=postgresql bundle exec rake db:drop db:create db:migrate
+    - name: Tests for mysql2
+      run: |
+        bundle exec rspec
+    - name: Tests for postgresql
+      run: |
+        ADAPTER=postgresql bundle exec rspec

@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   " query on each query that uses a WHERE statement"
   spec.homepage      = "https://github.com/fabioperrella/wt_activerecord_index_spy"
   spec.license       = "MIT"
-  spec.required_ruby_version = Gem::Requirement.new(">= 2.6.0")
+  spec.required_ruby_version = Gem::Requirement.new(">= 2.5.0")
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/fabioperrella/wt_activerecord_index_spy"
@@ -30,13 +30,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
-  spec.add_dependency "activerecord", "~> 6.0"
-  spec.add_dependency "activesupport", "~> 6.0"
+  spec.add_dependency "activerecord", ">= 4.0"
+  spec.add_dependency "activesupport", ">= 4.0"
   spec.add_dependency "rspec", "~> 3.0"
 
   spec.add_development_dependency "dotenv"
   spec.add_development_dependency "gemfury"
   spec.add_development_dependency "mysql2"
+  spec.add_development_dependency "pg"
   spec.add_development_dependency "pry-byebug"
 end
 # rubocop:enable Metrics/BlockLength

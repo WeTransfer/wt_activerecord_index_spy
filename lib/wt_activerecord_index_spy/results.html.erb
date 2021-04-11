@@ -8,15 +8,15 @@
         <td>Origin</td>
       </thead>
       <tbody>
-        <% [:certains, :uncertains].each do |level| -%>
-          <% results.send(level).each do |item| -%>
-            <tr>
-              <td><%= level[0..-2] %></td>
-              <td><%= item.identifier %></td>
-              <td><%= item.query %></td>
-              <td><%= item.origin %></td>
-            </tr>
-          <% end -%>
+        <% (certain_results + uncertain_results)
+            .sort_by{ |item| [item.certainity_level, item.identifier, item.query] }
+            .each do |item| -%>
+          <tr>
+            <td><%= item.certainity_level %></td>
+            <td><%= item.identifier %></td>
+            <td><%= item.query %></td>
+            <td><%= item.origin %></td>
+          </tr>
         <% end -%>
       </tbody>
     </table>

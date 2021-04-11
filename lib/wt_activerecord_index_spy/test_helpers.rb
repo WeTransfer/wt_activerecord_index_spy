@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rspec/matchers"
+
 module WtActiverecordIndexSpy
   # This module defines the helper have_used_db_indexes to use in RSpec tests
   module TestHelpers
@@ -12,7 +14,7 @@ module WtActiverecordIndexSpy
         end
 
         if only_certains
-          WtActiverecordIndexSpy.results.certains.empty?
+          WtActiverecordIndexSpy.certain_results.empty?
         else
           WtActiverecordIndexSpy.results.empty?
         end

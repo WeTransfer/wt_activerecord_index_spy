@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 2.5
   SuggestExtensions: false
   NewCops: enable
 
@@ -17,6 +17,12 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
+    - 'Rakefile'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'Rakefile'
 
 Style/ModuleFunction:
   EnforcedStyle: extend_self

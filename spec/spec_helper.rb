@@ -1,16 +1,30 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/MethodLength
 require "dotenv/load"
 Dotenv.load
 
+ENV["RAILS_ENV"] = "test"
+
 require "wt_activerecord_index_spy"
 require "active_record"
+require_relative "./support/test_database"
 
-# ActiveRecord::Base.logger = Logger.new(STDOUT)
-# ActiveRecord::Base.logger.level = 0
-# WtActiverecordIndexSpy.logger = Logger.new(STDOUT)
-# WtActiverecordIndexSpy.logger.level = 0
+if ENV["LOG_QUERIES"]
+  ActiveRecord::Base.logger = Logger.new($stdout)
+  ActiveRecord::Base.logger.level = 0
+end
+
+if ENV["DEBUG"]
+  WtActiverecordIndexSpy.logger = Logger.new($stdout)
+  WtActiverecordIndexSpy.logger.level = 0
+end
+
+adapter = ENV.fetch("ADAPTER", "mysql2")
+
+TestDatabase.set_env_database_url(adapter, with_database_name: true)
+TestDatabase.establish_connection
+
+require_relative "../lib/wt_activerecord_index_spy/test_models"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -23,38 +37,11 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
-  config.before :all do
-    db_config = {
-      adapter: "mysql2",
-      host: ENV.fetch("DB_HOST", "localhost"),
-      username: ENV.fetch("DB_USER", "root"),
-      password: ENV.fetch("DB_PASSWORD", "root"),
-      database: "wt_activerecord_index_spy_test"
-    }
-    # TODO: the must be a better way to create and connect to the database
-    ActiveRecord::Base.establish_connection(db_config.reject { |k, _v| k == :database })
-    ActiveRecord::Base.connection.create_database(db_config[:database])
-    ActiveRecord::Base.establish_connection(db_config)
-
-    create_table_migration = Class.new(ActiveRecord::Migration[6.0]) do
-      def change
-        create_table :users do |t|
-          t.string :name
-          t.string :email
-          t.integer :age
-          t.integer :city_id
-        end
-
-        add_index :users, :email
-        add_index :users, :city_id
-
-        create_table :cities do |t|
-          t.string :name
-        end
-      end
-    end
-
-    create_table_migration.new.change
+  # Some tests may run only for a specific adapter, so we need to filter them
+  all_adapters = TestDatabase.adapters
+  other_adapters = all_adapters - [adapter]
+  other_adapters.each do |other_adapter|
+    config.filter_run_excluding(only: other_adapter.to_sym)
   end
 
   config.around :each do |example|
@@ -64,20 +51,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.after :all do
-    ActiveRecord::Base.connection.drop_database("wt_activerecord_index_spy_test")
-  end
-
   config.expect_with :rspec do |c|
     c.max_formatted_output_length = 10_000
   end
 end
-
-class User < ActiveRecord::Base
-  def self.some_method_with_a_query_missing_index
-    find_by(name: "any")
-  end
-end
-
-class City < ActiveRecord::Base; end
-# rubocop:enable Metrics/MethodLength

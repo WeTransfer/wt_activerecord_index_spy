@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe "test_helpers" do
+  require "wt_activerecord_index_spy/test_helpers"
   include WtActiverecordIndexSpy::TestHelpers
 
   describe "matcher have_used_db_indexes" do
@@ -13,11 +14,11 @@ RSpec.describe "test_helpers" do
     end
 
     it "returns successfully when a query have used an index" do
-      expect { User.find_by(email: "aa@aa.com") }.to have_used_db_indexes
+      expect { User.where(email: "aa@aa.com").to_a }.to have_used_db_indexes
     end
 
     context "when only_certains is true" do
-      it "does not fail for uncertain analisis" do
+      it "does not fail for uncertain analisis", only: [:mysql2] do
         City.create!(name: "Rio", id: 1)
         City.create!(name: "Santo Andre", id: 2)
         City.create!(name: "Maua", id: 3)

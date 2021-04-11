@@ -20,17 +20,18 @@ module WtActiverecordIndexSpy
       /^SHOW max_identifier_length/,
       /^SELECT @@FOREIGN_KEY_CHECKS/,
       /^SET FOREIGN_KEY_CHECKS/,
-      /^TRUNCATE TABLE/
+      /^TRUNCATE TABLE/,
+      /^EXPLAIN/
     ].freeze
 
     attr_reader :queries_missing_index
 
     def initialize(ignore_queries_originated_in_test_code:,
                    aggregator: Aggregator.new,
-                   query_index_analyser: QueryIndexAnalyser.new)
+                   query_analyser: QueryAnalyser.new)
       @queries_missing_index = []
       @aggregator = aggregator
-      @query_index_analyser = query_index_analyser
+      @query_analyser = query_analyser
       @ignore_queries_originated_in_test_code = ignore_queries_originated_in_test_code
     end
 
@@ -49,7 +50,7 @@ module WtActiverecordIndexSpy
       logger.debug "query type accepted"
 
       origin = caller.find { |line| !line.include?("/gems/") }
-      if @ignore_queries_originated_in_test_code && (origin.include?("_spec") || origin.include?("_test"))
+      if @ignore_queries_originated_in_test_code && query_originated_in_tests?(origin)
         logger.debug "origin ignored: #{origin}"
         # Hopefully, it will get the line which executed the query.
         # It ignores activerecord, activesupport and other gem frames.
@@ -59,21 +60,28 @@ module WtActiverecordIndexSpy
 
       logger.debug "origin accepted: #{origin}"
 
-      certainity_level = @query_index_analyser.analyse(query)
+      certainity_level = @query_analyser.analyse(**values.slice(:sql, :connection, :binds))
       return unless certainity_level
 
       item = Aggregator::Item.new(
         identifier: identifier,
         query: query,
-        origin: reduce_origin(origin)
+        origin: reduce_origin(origin),
+        certainity_level: certainity_level
       )
 
-      @aggregator.add(item, certainity_level)
+      @aggregator.add(item)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
 
     private
+
+    # TODO: Find a better way to detect if the origin is a test file
+    def query_originated_in_tests?(origin)
+      origin.include?("spec/") ||
+        origin.include?("test/")
+    end
 
     def ignore_query?(name:, query:)
       # FIXME: this seems bad. we should probably have a better way to indicate
@@ -87,7 +95,7 @@ module WtActiverecordIndexSpy
 
     def reduce_origin(origin)
       origin[0...origin.rindex(":")]
-        .split("/")[-2..]
+        .split("/")[-2..-1]
         .join("/")
     end
 

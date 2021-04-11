@@ -2,9 +2,10 @@
 
 require_relative "wt_activerecord_index_spy/version"
 require_relative "wt_activerecord_index_spy/aggregator"
-require_relative "wt_activerecord_index_spy/query_index_analyser"
+require_relative "wt_activerecord_index_spy/query_analyser"
+require_relative "wt_activerecord_index_spy/query_analyser/mysql"
+require_relative "wt_activerecord_index_spy/query_analyser/postgres"
 require_relative "wt_activerecord_index_spy/notification_listener"
-require_relative "wt_activerecord_index_spy/test_helpers"
 require "logger"
 
 # This is the top level module which requires everything
@@ -18,21 +19,21 @@ module WtActiverecordIndexSpy
   end
 
   def query_analyser
-    @query_analyser ||= QueryIndexAnalyser.new
+    @query_analyser ||= QueryAnalyser.new
   end
 
   # rubocop:disable Metrics/MethodLength
   def watch_queries(
     aggregator: self.aggregator,
     ignore_queries_originated_in_test_code: true,
-    query_index_analyser: query_analyser
+    query_analyser: self.query_analyser
   )
     aggregator.reset
 
     notification_listener = NotificationListener.new(
       aggregator: aggregator,
       ignore_queries_originated_in_test_code: ignore_queries_originated_in_test_code,
-      query_index_analyser: query_index_analyser
+      query_analyser: query_analyser
     )
 
     subscriber = ActiveSupport::Notifications
@@ -48,6 +49,10 @@ module WtActiverecordIndexSpy
 
   def export_html_results(file = nil, stdout: $stdout)
     aggregator.export_html_results(file, stdout: stdout)
+  end
+
+  def certain_results
+    aggregator.certain_results
   end
 
   def results
