@@ -1,5 +1,9 @@
 # wt_activerecord_index_spy
 
+[![Gem](https://img.shields.io/gem/v/wt_activerecord_index_spy)](https://rubygems.org/gems/wt_activerecord_index_spy)
+![GitHub Actions Workflow](https://github.com/WeTransfer/wt_activerecord_index_spy/actions/workflows/main.yml/badge.svg)
+[![Hippocratic License](https://img.shields.io/badge/license-Hippocratic-green)](https://github.com/WeTransfer/wt_activerecord_index_spy/blob/main/LICENSE.md)
+
 A Ruby library to watch and analyze queries that run using `ActiveRecord` to check
 if they use a proper index.
 
@@ -157,12 +161,13 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/wt_activerecord_index_spy. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/wt_activerecord_index_spy/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/wetransfer/wt_activerecord_index_spy. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](./CODE_OF_CONDUCT.md).
+Please add your name to the [CONTRIBUTORS.md](./CONTRIBUTORS.md)
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the [Hippocratic License](https://firstdonoharm.dev/version/2/1/license.html).
 
 ## Code of Conduct
 
-Everyone interacting in the WtActiverecordIndexSpy project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/wt_activerecord_index_spy/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the WT Activerecord Index Spy project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](./CODE_OF_CONDUCT.md).
