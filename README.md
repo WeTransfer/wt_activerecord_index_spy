@@ -1,5 +1,9 @@
 # wt_activerecord_index_spy
 
+[![Gem](https://img.shields.io/gem/v/wt_activerecord_index_spy)](https://rubygems.org/gems/wt_activerecord_index_spy)
+![GitHub Actions Workflow](https://github.com/WeTransfer/wt_activerecord_index_spy/actions/workflows/main.yml/badge.svg)
+[![Hippocratic License](https://img.shields.io/badge/license-Hippocratic-green)](https://github.com/WeTransfer/wt_activerecord_index_spy/blob/main/LICENSE.md)
+
 A Ruby library to watch and analyze queries that run using `ActiveRecord` to check
 if they use a proper index.
 
