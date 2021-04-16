@@ -12,6 +12,21 @@ It subscribes to `sql.active_record` notification using `ActiveSupport::Notifica
 It was designed to be used in tests, but it's also possible to use it in
 staging or production, carefully.
 
+## Why would I use this?
+
+Imagine you have an application running in production and after a deploy, it starts to slow down.
+
+After a perhaps exhaustive debugging session, you may find that a new query or perhaps a change
+in the database schema was responsible for starting to have queries do not use database indexes.
+
+Then, you create the appropriate index and the problem is solved!
+
+By using this gem, you can get those queries that are not using suitable database indexes in
+your test suite! So you won't have surprises like the example above, after a deploy.
+
+You can also enable the gem in your development/staging environment, generate a report
+and analyze if there is any missing index!
+
 ## Installation
 
 Add this line to your application's Gemfile:
