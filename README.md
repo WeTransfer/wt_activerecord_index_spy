@@ -17,7 +17,7 @@ staging or production, carefully.
 Imagine you have an application running in production and after a deploy, it starts to slow down.
 
 After a perhaps exhaustive debugging session, you may find that a new query or perhaps a change
-in the database schema was responsible for starting to have queries do not use database indexes.
+in the database schema was responsible for starting to have queries that do not use database indexes.
 
 Then, you create the appropriate index and the problem is solved!
 
