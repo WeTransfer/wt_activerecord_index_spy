@@ -22,10 +22,10 @@ in the database schema was responsible for starting to have queries that do not 
 Then, you create the appropriate index and the problem is solved!
 
 By using this gem, you can get those queries that are not using suitable database indexes in
-your test suite! So you won't have surprises like the example above, after a deploy.
+your test suite. So you won't have surprises like the example above, after a deploy.
 
 You can also enable the gem in your development/staging environment, generate a report
-and analyze if there is any missing index!
+and analyze if there is any missing index.
 
 ## Installation
 
