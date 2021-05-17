@@ -1,3 +1,7 @@
+## 0.4.0
+* change `NotificationListener` to ignore queries to INFORMATION_SCHEMA
+* change `NotificationListener` to not ignore queries with an empty identifier, for example, when running with `ActiveRecord::Base.connection.execute`
+
 ## 0.3.0
 * add support for PostgreSQL (unfortunately all results are uncertain)
 * add support for Ruby >= 2.5 and Activerecord >= 4
