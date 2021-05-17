@@ -22,7 +22,7 @@ module WtActiverecordIndexSpy
       /^SET FOREIGN_KEY_CHECKS/,
       /^TRUNCATE TABLE/,
       /^EXPLAIN/,
-     /FROM INFORMATION_SCHEMA/,
+      /FROM INFORMATION_SCHEMA/,
     ].freeze
 
     attr_reader :queries_missing_index

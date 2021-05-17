@@ -26,3 +26,6 @@ Metrics/MethodLength:
 
 Style/ModuleFunction:
   EnforcedStyle: extend_self
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
