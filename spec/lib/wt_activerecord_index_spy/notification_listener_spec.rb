@@ -5,7 +5,7 @@ RSpec.describe WtActiverecordIndexSpy::NotificationListener do
     aggregator = WtActiverecordIndexSpy::Aggregator.new
 
     WtActiverecordIndexSpy.watch_queries(aggregator: aggregator, ignore_queries_originated_in_test_code: false) do
-      ActiveRecord::Base.connection.query(
+      ActiveRecord::Base.connection.execute(
         "SELECT count FROM INFORMATION_SCHEMA.INNODB_METRICS "\
         "WHERE name='log_lsn_checkpoint_age'"
       )
@@ -21,7 +21,7 @@ RSpec.describe WtActiverecordIndexSpy::NotificationListener do
       User.create!(name: "lala")
 
       WtActiverecordIndexSpy.watch_queries(aggregator: aggregator, ignore_queries_originated_in_test_code: false) do
-        ActiveRecord::Base.connection.query(
+        ActiveRecord::Base.connection.execute(
           "SELECT * from users where name like 'lala%'"
         )
       end
@@ -37,7 +37,7 @@ RSpec.describe WtActiverecordIndexSpy::NotificationListener do
       User.create!(name: "lala")
 
       WtActiverecordIndexSpy.watch_queries(aggregator: aggregator, ignore_queries_originated_in_test_code: false) do
-        ActiveRecord::Base.connection.query(
+        ActiveRecord::Base.connection.execute(
           "SELECT * from users where name like 'lala%'"
         )
       end
