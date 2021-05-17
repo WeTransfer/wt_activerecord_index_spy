@@ -15,7 +15,7 @@ RSpec.describe WtActiverecordIndexSpy::NotificationListener do
     expect(aggregator.uncertain_results.count).to eq(0)
   end
 
-  context 'when the adapter is mysql2' do
+  context "when the adapter is mysql2" do
     it "does not ignore queries with empty identifier", only: [:mysql2] do
       aggregator = WtActiverecordIndexSpy::Aggregator.new
       User.create!(name: "lala")
@@ -31,7 +31,7 @@ RSpec.describe WtActiverecordIndexSpy::NotificationListener do
     end
   end
 
-  context 'when the adapter is postgresql' do
+  context "when the adapter is postgresql" do
     it "does not ignore queries with empty identifier", only: [:postgresql] do
       aggregator = WtActiverecordIndexSpy::Aggregator.new
       User.create!(name: "lala")
