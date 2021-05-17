@@ -15,17 +15,35 @@ RSpec.describe WtActiverecordIndexSpy::NotificationListener do
     expect(aggregator.uncertain_results.count).to eq(0)
   end
 
-  it "does not ignore queries with empty identifier" do
-    aggregator = WtActiverecordIndexSpy::Aggregator.new
-    User.create!(name: "lala")
+  context 'when the adapter is mysql2' do
+    it "does not ignore queries with empty identifier", only: [:mysql2] do
+      aggregator = WtActiverecordIndexSpy::Aggregator.new
+      User.create!(name: "lala")
 
-    WtActiverecordIndexSpy.watch_queries(aggregator: aggregator, ignore_queries_originated_in_test_code: false) do
-      ActiveRecord::Base.connection.query(
-        "SELECT * from users where name like 'lala%'"
-      )
+      WtActiverecordIndexSpy.watch_queries(aggregator: aggregator, ignore_queries_originated_in_test_code: false) do
+        ActiveRecord::Base.connection.query(
+          "SELECT * from users where name like 'lala%'"
+        )
+      end
+
+      expect(aggregator.certain_results.count).to eq(1)
+      expect(aggregator.uncertain_results.count).to eq(0)
     end
+  end
 
-    expect(aggregator.certain_results.count).to eq(1)
-    expect(aggregator.uncertain_results.count).to eq(0)
+  context 'when the adapter is postgresql' do
+    it "does not ignore queries with empty identifier", only: [:postgresql] do
+      aggregator = WtActiverecordIndexSpy::Aggregator.new
+      User.create!(name: "lala")
+
+      WtActiverecordIndexSpy.watch_queries(aggregator: aggregator, ignore_queries_originated_in_test_code: false) do
+        ActiveRecord::Base.connection.query(
+          "SELECT * from users where name like 'lala%'"
+        )
+      end
+
+      expect(aggregator.certain_results.count).to eq(0)
+      expect(aggregator.uncertain_results.count).to eq(1)
+    end
   end
 end
