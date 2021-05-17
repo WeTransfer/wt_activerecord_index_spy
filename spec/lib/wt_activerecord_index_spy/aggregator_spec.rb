@@ -51,7 +51,7 @@ module WtActiverecordIndexSpy
                                  ["certain"], ["bb"], ["SELECT 4"], ["popo.rb"],
                                  ["certain"], ["bb"], ["SELECT 41"], ["popo.rb"],
                                  ["certain"], ["cc"], ["SELECT 1"], ["popo.rb"],
-                                 ["uncertain"], ["bb"], ["SELECT 2"], ["lala.rb"]
+                                 ["uncertain"], ["bb"], ["SELECT 2"], ["lala.rb"],
                                ])
 
         expect(stdout_spy).to have_received(:puts).with(/Report exported to/)

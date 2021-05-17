@@ -9,7 +9,7 @@ module WtActiverecordIndexSpy
       ALLOWED_EXTRA_VALUES = [
         # https://bugs.mysql.com/bug.php?id=64197
         "Impossible WHERE noticed after reading const tables",
-        "no matching row"
+        "no matching row",
       ].freeze
 
       def analyse(results)

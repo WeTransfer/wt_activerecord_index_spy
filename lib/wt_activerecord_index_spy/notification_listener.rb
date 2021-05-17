@@ -21,7 +21,8 @@ module WtActiverecordIndexSpy
       /^SELECT @@FOREIGN_KEY_CHECKS/,
       /^SET FOREIGN_KEY_CHECKS/,
       /^TRUNCATE TABLE/,
-      /^EXPLAIN/
+      /^EXPLAIN/,
+      /FROM INFORMATION_SCHEMA/,
     ].freeze
 
     attr_reader :queries_missing_index
@@ -44,7 +45,7 @@ module WtActiverecordIndexSpy
       identifier = values[:name]
 
       if ignore_query?(query: query, name: identifier)
-        logger.debug "query type ignored"
+        logger.debug "query type ignored, name: #{identifier}, query: #{query}"
         return
       end
       logger.debug "query type accepted"
@@ -88,7 +89,6 @@ module WtActiverecordIndexSpy
       # the query was cached
       name == "CACHE" ||
         name == "SCHEMA" ||
-        !name ||
         !query.downcase.include?("where") ||
         IGNORED_SQL.any? { |r| query =~ r }
     end

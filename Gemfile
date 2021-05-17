@@ -11,7 +11,7 @@ gem "rspec", "~> 3.0"
 
 gem "rubocop", "~> 1.7"
 
-active_record_version = ENV.fetch("ACTIVE_RECORD_VERSION", "~> 4")
+active_record_version = ENV.fetch("ACTIVE_RECORD_VERSION", "~> 6")
 
 gem "activerecord", active_record_version
 gem "activesupport", active_record_version
