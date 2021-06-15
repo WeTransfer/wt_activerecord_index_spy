@@ -42,7 +42,7 @@ module WtActiverecordIndexSpy
     def call(_name, _start, _finish, _message_id, values)
       query = values[:sql]
       logger.debug "query: #{query}"
-      identifier = values[:name]
+      identifier = values[:name].to_s
 
       if ignore_query?(query: query, name: identifier)
         logger.debug "query type ignored, name: #{identifier}, query: #{query}"
@@ -70,7 +70,6 @@ module WtActiverecordIndexSpy
         origin: reduce_origin(origin),
         certainity_level: certainity_level
       )
-
       @aggregator.add(item)
     end
     # rubocop:enable Metrics/AbcSize
