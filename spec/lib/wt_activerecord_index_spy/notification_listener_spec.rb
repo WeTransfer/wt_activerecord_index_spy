@@ -17,7 +17,7 @@ RSpec.describe WtActiverecordIndexSpy::NotificationListener do
 
   describe 'Identifier not provided by ActiveRecord' do
     let(:values) do
-      { sql: 'SELECT * FROM `users` WHERE `name` = "lala"' }
+      { sql: 'SELECT * FROM users WHERE name = "lala"' }
     end
 
     it 'defaults to empty string if identifier not provided' do
