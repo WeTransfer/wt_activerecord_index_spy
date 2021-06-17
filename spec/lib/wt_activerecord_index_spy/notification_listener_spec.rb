@@ -2,6 +2,7 @@
 
 RSpec.describe WtActiverecordIndexSpy::NotificationListener do
   let(:aggregator) { WtActiverecordIndexSpy::Aggregator.new }
+  let(:query) { "SELECT * from users where name like 'lala%'" }
 
   it "ignores queries to INFORMATION_SCHEMA", only: [:mysql2] do
     WtActiverecordIndexSpy.watch_queries(aggregator: aggregator, ignore_queries_originated_in_test_code: false) do
@@ -17,7 +18,7 @@ RSpec.describe WtActiverecordIndexSpy::NotificationListener do
 
   describe 'Identifier not provided by ActiveRecord' do
     let(:values) do
-      { sql: 'SELECT * FROM users WHERE name = "lala"' }
+      { sql: query }
     end
 
     it 'defaults to empty string if identifier not provided' do
@@ -33,9 +34,7 @@ RSpec.describe WtActiverecordIndexSpy::NotificationListener do
     it "does not ignore queries with empty identifier", only: [:mysql2] do
       User.create!(name: "lala")
       WtActiverecordIndexSpy.watch_queries(aggregator: aggregator, ignore_queries_originated_in_test_code: false) do
-        ActiveRecord::Base.connection.execute(
-          "SELECT * from users where name like 'lala%'"
-        )
+        ActiveRecord::Base.connection.execute(query)
       end
 
       expect(aggregator.certain_results.count).to eq(1)
@@ -48,9 +47,7 @@ RSpec.describe WtActiverecordIndexSpy::NotificationListener do
       User.create!(name: "lala")
 
       WtActiverecordIndexSpy.watch_queries(aggregator: aggregator, ignore_queries_originated_in_test_code: false) do
-        ActiveRecord::Base.connection.execute(
-          "SELECT * from users where name like 'lala%'"
-        )
+        ActiveRecord::Base.connection.execute(query)
       end
 
       expect(aggregator.certain_results.count).to eq(0)
