@@ -1,3 +1,6 @@
+## 0.4.1
+* Fix issue with missing identifier from ActiveRecord (#21)
+
 ## 0.4.0
 * change `NotificationListener` to ignore queries to INFORMATION_SCHEMA
 * change `NotificationListener` to not ignore queries with an empty identifier, for example, when running with `ActiveRecord::Base.connection.execute`
