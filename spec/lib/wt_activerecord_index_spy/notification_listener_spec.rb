@@ -21,10 +21,8 @@ RSpec.describe WtActiverecordIndexSpy::NotificationListener do
       { sql: query }
     end
 
-  describe 'No identifier provided' do
     before(:each) do
-      listener = WtActiverecordIndexSpy::NotificationListener.new(ignore_queries_originated_in_test_code: false,
-      aggregator: aggregator)
+      listener = WtActiverecordIndexSpy::NotificationListener.new(ignore_queries_originated_in_test_code: false, aggregator: aggregator)
       listener.call('name', 'start', 'finish', 'message_id', values)
     end
 
