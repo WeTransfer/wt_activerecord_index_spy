@@ -75,6 +75,36 @@ it 'uses an index for all the queries' do
 end
 ```
 
+#### Run for all rspec tests
+
+By adding the following to your `rspec` configuration the `have_used_db_indexes` will run on each individual test and error if an index has not been used:
+
+```ruby
+Rspec.configure do |config|
+  config.around(:each) do |example|
+    unless example.metadata[:skip_index_spy]
+      expect { example.run }.to(have_used_db_indexes)
+    else
+      example.run
+    end
+  end
+
+  config.after(:all) do
+    WtActiverecordIndexSpy.export_html_results
+  end
+end
+```
+
+If you wish to skip index checking for specific tests you can then annotate your test as follows:
+
+```ruby
+describe 'Will not check indexes', :skip_index_spy do
+# ...or...
+context 'Does not check indexes', :skip_index_spy do
+# ...or...
+it 'will not check indexes', :skip_index_spy do
+```
+
 ### 2 - Watching all queries from a start point
 
 Add this line to enable it:
