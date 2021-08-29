@@ -9,7 +9,7 @@ module WtActiverecordIndexSpy
   # It gets each query that uses a WHERE statement and runs a EXPLAIN query to
   # see if it uses an index.
   class NotificationListener
-    IGNORED_SQL = [
+    IGNORED_SQL = T.let([
       /^PRAGMA (?!(table_info))/,
       /^SELECT currval/,
       /^SELECT CAST/,
@@ -24,7 +24,7 @@ module WtActiverecordIndexSpy
       /^TRUNCATE TABLE/,
       /^EXPLAIN/,
       /FROM INFORMATION_SCHEMA/,
-    ].freeze
+    ].freeze, T::Array[Regexp])
 
     attr_reader :queries_missing_index
 

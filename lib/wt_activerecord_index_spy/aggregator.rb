@@ -55,9 +55,11 @@ module WtActiverecordIndexSpy
 
     sig do
       params(
-        file: T.nilable(File),
+        file: T.nilable(T.any(File, Tempfile)),
         stdout: IO
-      ).void
+      )
+      .void
+      .checked(:compiled)
     end
     def export_html_results(file=nil, stdout: $stdout)
       file ||= default_html_output_file

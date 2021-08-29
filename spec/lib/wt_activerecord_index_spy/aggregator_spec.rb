@@ -15,8 +15,8 @@ module WtActiverecordIndexSpy
 
         (1..10).each do |index|
           query = "SELECT * FROM lala WHERE id = #{index}"
-          aggregator.add(build_item(identifier: "any", query: query, certainity_level: :certain))
-          aggregator.add(build_item(identifier: "any", query: query, certainity_level: :certain))
+          aggregator.add(build_item(identifier: "any", query: query, certainity_level: :certain, origin: 'any'))
+          aggregator.add(build_item(identifier: "any", query: query, certainity_level: :certain, origin: 'any'))
         end
 
         expect(aggregator.certain_results.count).to eq(10)
