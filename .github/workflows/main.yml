@@ -33,6 +33,9 @@ jobs:
       run: |
         gem install bundler
         bundle install
+    - name: Typecheck
+      run: |
+        bundle exec srb tc
     - name: Create databases
       run: |
         sudo systemctl start mysql.service
