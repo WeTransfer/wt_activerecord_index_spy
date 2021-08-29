@@ -33,7 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activerecord", ">= 4.0"
   spec.add_dependency "activesupport", ">= 4.0"
   spec.add_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "sorbet-runtime"
+  spec.add_dependency "sorbet-runtime"
 
   spec.add_development_dependency "dotenv"
   spec.add_development_dependency "gemfury"
