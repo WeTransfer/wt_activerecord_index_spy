@@ -1,18 +1,20 @@
-# typed: true
+# typed: strict
 # frozen_string_literal: true
 
 module WtActiverecordIndexSpy
   class QueryAnalyser
     # It analyses the result of an EXPLAIN query to see if any index is missing.
     module Mysql
+      extend T::Sig
       extend self
 
-      ALLOWED_EXTRA_VALUES = [
+      ALLOWED_EXTRA_VALUES = T.let([
         # https://bugs.mysql.com/bug.php?id=64197
         "Impossible WHERE noticed after reading const tables",
         "no matching row",
-      ].freeze
+      ].freeze, T::Array[String])
 
+      sig { params(results: T::Array[T::Hash[String, String]]).returns(Symbol) }
       def analyse(results)
         results.find do |result|
           certainity_level = analyse_explain(result)
@@ -25,6 +27,7 @@ module WtActiverecordIndexSpy
 
       # rubocop: disable Metrics/CyclomaticComplexity
       # rubocop: disable Metrics/PerceivedComplexity
+      sig {params(result: T.untyped).returns(T.nilable(Symbol))}
       def analyse_explain(result)
         type = result.fetch("type")
         possible_keys = result.fetch("possible_keys")

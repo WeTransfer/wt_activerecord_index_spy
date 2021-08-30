@@ -17,6 +17,13 @@ module WtActiverecordIndexSpy
     # - Mysql2: sends sql complete and binds = []
     # - Postregs: sends sql in a form of prepared statement and its values in binds
     # rubocop:disable Metrics/MethodLength
+    sig do
+      params(
+        sql: String,
+        connection: ActiveRecord::ConnectionAdapters::AbstractAdapter,
+        binds: T::Array[T.untyped]
+      ).returns(Symbol)
+    end
     def analyse(sql:, connection: ActiveRecord::Base.connection, binds: [])
       query = sql
       # TODO: this could be more intelligent to not duplicate similar queries
