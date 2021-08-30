@@ -1,10 +1,12 @@
-# typed: true
+# typed: strict
 # frozen_string_literal: true
 
 module WtActiverecordIndexSpy
   # It runs an EXPLAIN query given a query and analyses the result to see if
   # some index is missing.
   class QueryAnalyser
+    extend T::Sig
+    sig {void}
     def initialize
       # This is a cache to not run the same EXPLAIN again
       # It sets the query as key and the result (certain, uncertain) as the value
@@ -48,6 +50,15 @@ module WtActiverecordIndexSpy
 
     private
 
+    sig do
+      params(connection: ActiveRecord::ConnectionAdapters::AbstractAdapter)
+      .returns(
+        T.any(
+          T.class_of(WtActiverecordIndexSpy::QueryAnalyser::Mysql),
+          T.class_of(WtActiverecordIndexSpy::QueryAnalyser::Postgres)
+        )
+      )
+    end
     def select_adapter(connection)
       case connection.adapter_name
       when "Mysql2"
