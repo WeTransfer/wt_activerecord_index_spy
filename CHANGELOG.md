@@ -1,3 +1,6 @@
+## 0.5.0
+* Add Sorbet with a few type definitions
+
 ## 0.4.1
 * Fix issue with missing identifier from ActiveRecord (#21)
 

@@ -33,11 +33,14 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activerecord", ">= 4.0"
   spec.add_dependency "activesupport", ">= 4.0"
   spec.add_dependency "rspec", "~> 3.0"
+  spec.add_dependency "sorbet-runtime"
 
   spec.add_development_dependency "dotenv"
   spec.add_development_dependency "gemfury"
   spec.add_development_dependency "mysql2"
   spec.add_development_dependency "pg"
   spec.add_development_dependency "pry-byebug"
+  spec.add_development_dependency "rubocop-sorbet"
+  spec.add_development_dependency "sorbet"
 end
 # rubocop:enable Metrics/BlockLength

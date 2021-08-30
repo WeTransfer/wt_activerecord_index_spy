@@ -1,5 +1,7 @@
+# typed: false
 # frozen_string_literal: true
 
+require 'sorbet-runtime'
 require_relative "wt_activerecord_index_spy/version"
 require_relative "wt_activerecord_index_spy/aggregator"
 require_relative "wt_activerecord_index_spy/query_analyser"

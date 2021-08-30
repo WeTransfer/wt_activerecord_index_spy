@@ -1,3 +1,4 @@
+# typed: true
 # frozen_string_literal: true
 
 # This class should not be required by the library because
