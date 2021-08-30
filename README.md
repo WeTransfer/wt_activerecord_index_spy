@@ -176,7 +176,7 @@ WtActiverecordIndexSpy.export_html_results
 
 Currently, it supports:
 
-**Ruby**: 2.7, 2.6, 2.5
+**Ruby**: 3.0, 2.7, 2.6, 2.5
 
 **Mysql**: 5.7
 

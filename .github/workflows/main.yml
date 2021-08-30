@@ -12,6 +12,7 @@ jobs:
           - 2.7
           - 2.6
           - 2.5
+          - 3.0
         activerecord:
           - '~> 6'
           - '~> 5'
@@ -19,6 +20,10 @@ jobs:
         exclude:
           - ruby: 2.7
             activerecord: '~> 4'
+          - ruby: 3.0
+            activerecord: '~> 4'
+          - ruby: 3.0
+            activerecord: '~> 5'
     env:
       DATABASE_URL_MYSQL2: 'mysql2://root:root@127.0.0.1:3306'
       DATABASE_URL_POSTGRESQL: 'postgresql://root:root@127.0.0.1:5432'
