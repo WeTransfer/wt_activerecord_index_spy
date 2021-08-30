@@ -1,6 +1,3 @@
-## 0.6.0
-* Add support for Ruby 3.0
-
 ## 0.5.0
 * Add Sorbet with a few type definitions
 
