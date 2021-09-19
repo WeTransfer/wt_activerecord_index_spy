@@ -7,6 +7,7 @@ module WtActiverecordIndexSpy
     module Postgres
       extend self
 
+      sig {params(result: T.untyped).returns(T.nilable(Symbol))}
       def analyse(results)
         WtActiverecordIndexSpy.logger.debug("results:\n#{results.rows.join("\n")}")
 
